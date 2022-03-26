@@ -1,5 +1,5 @@
 
 
 * Break up the test in one test per class.
-
+* Fix logo (it's using cppthread logo at the moment).
 
