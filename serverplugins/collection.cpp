@@ -23,14 +23,11 @@
 
 #include    "serverplugins/repository.h"
 
-// snaplogger
-//
-#include    "snaplogger/message.h"
-
 
 // cppthread
 //
 #include    "cppthread/guard.h"
+#include    "cppthread/log.h"
 
 
 // C++
@@ -227,23 +224,23 @@ bool collection::load_plugins(server::pointer_t s)
             //
             if(name_filename.first == "server")
             {
-                SNAP_LOG_ERROR                                      // LCOV_EXCL_LINE
-                    << "a plugin cannot be called \"server\"."      // LCOV_EXCL_LINE
-                    << SNAP_LOG_SEND;                               // LCOV_EXCL_LINE
-                good = false;                                       // LCOV_EXCL_LINE
-                continue;                                           // LCOV_EXCL_LINE
+                cppthread::log << cppthread::log_level_t::error  // LCOV_EXCL_LINE
+                    << "a plugin cannot be called \"server\"."          // LCOV_EXCL_LINE
+                    << cppthread::end;                                  // LCOV_EXCL_LINE
+                good = false;                                           // LCOV_EXCL_LINE
+                continue;                                               // LCOV_EXCL_LINE
             }
 
             plugin::pointer_t p(repository.get_plugin(name_filename.second));
             if(p == nullptr)
             {
-                SNAP_LOG_FATAL
+                cppthread::log << cppthread::log_level_t::fatal
                     << "loaded file \""
                     << name_filename.second
                     << "\" for plugin \""
                     << name_filename.first
                     << "\", but the plugin was not found (name mismatch? plugin not defined?)."
-                    << SNAP_LOG_SEND;
+                    << cppthread::end;
                 good = false;
                 continue;
             }
@@ -271,13 +268,13 @@ bool collection::load_plugins(server::pointer_t s)
                 }
                 if(in_conflict)
                 {
-                    SNAP_LOG_FATAL
+                    cppthread::log << cppthread::log_level_t::fatal
                         << "plugin \""
                         << op.first
                         << "\" is in conflict with \""
                         << name_filename.first
                         << "\"."
-                        << SNAP_LOG_SEND;
+                        << cppthread::end;
                     good = false;
                     continue;
                 }

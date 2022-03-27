@@ -22,14 +22,10 @@
 #include    "serverplugins/repository.h"
 
 
-// snaplogger
-//
-#include    "snaplogger/message.h"
-
-
 // cppthread
 //
 #include    "cppthread/guard.h"
+#include    "cppthread/log.h"
 
 
 // C
@@ -147,7 +143,7 @@ plugin::pointer_t repository::get_plugin(names::filename_t const & filename)
     if(h == nullptr)
     {
         int const e(errno);
-        SNAP_LOG_ERROR
+        cppthread::log << cppthread::log_level_t::error
             << "cannot load plugin file \""
             << filename
             << "\" (errno: "
@@ -155,16 +151,16 @@ plugin::pointer_t repository::get_plugin(names::filename_t const & filename)
             << ", "
             << dlerror()
             << ")"
-            << SNAP_LOG_SEND;
+            << cppthread::end;
         return plugin::pointer_t();
     }
     f_register_filename.clear();
 
-    SNAP_LOG_DEBUG
+    cppthread::log << cppthread::log_level_t::debug
         << "loaded plugin: \""
         << filename
-        << "\""
-        << SNAP_LOG_SEND;
+        << "\"."
+        << cppthread::end;
 
     return f_plugins[filename];
 }
