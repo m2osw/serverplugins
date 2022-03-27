@@ -43,7 +43,7 @@ typedef std::set<std::string>           string_set_t;
 
 
 
-struct plugin_definition
+struct definition
 {
     version_t                           f_version = version_t();
     version_t                           f_library_version = version_t();
@@ -64,12 +64,12 @@ struct plugin_definition
 
 
 template<typename T>
-class plugin_definition_value
+class definition_value
 {
 public:
     typedef T   value_t;
 
-    constexpr plugin_definition_value<T>(T const v)
+    constexpr definition_value<T>(T const v)
         : f_value(v)
     {
     }
@@ -87,178 +87,178 @@ private:
 
 
 class plugin_version
-    : public plugin_definition_value<version_t>
+    : public definition_value<version_t>
 {
 public:
     constexpr plugin_version()
-        : plugin_definition_value<version_t>(version_t())
+        : definition_value<version_t>(version_t())
     {
     }
 
     constexpr plugin_version(version_t version)
-        : plugin_definition_value<version_t>(version)
+        : definition_value<version_t>(version)
     {
     }
 };
 
 
-class plugin_library_version
-    : public plugin_definition_value<version_t>
+class library_version
+    : public definition_value<version_t>
 {
 public:
-    constexpr plugin_library_version()
-        : plugin_definition_value<version_t>(version_t())
+    constexpr library_version()
+        : definition_value<version_t>(version_t())
     {
     }
 
-    constexpr plugin_library_version(version_t version)
-        : plugin_definition_value<version_t>(version)
+    constexpr library_version(version_t version)
+        : definition_value<version_t>(version)
     {
     }
 };
 
 
-class plugin_last_modification
-    : public plugin_definition_value<time_t>
+class last_modification
+    : public definition_value<time_t>
 {
 public:
-    constexpr plugin_last_modification()
-        : plugin_definition_value<time_t>(time_t())
+    constexpr last_modification()
+        : definition_value<time_t>(time_t())
     {
     }
 
-    constexpr plugin_last_modification(time_t const last_modification)
-        : plugin_definition_value<time_t>(validate_date(last_modification))
+    constexpr last_modification(time_t const t)
+        : definition_value<time_t>(validate_date(t))
     {
     }
 };
 
 
 class plugin_name
-    : public plugin_definition_value<char const *>
+    : public definition_value<char const *>
 {
 public:
     constexpr plugin_name()
-        : plugin_definition_value<char const *>(nullptr)
+        : definition_value<char const *>(nullptr)
     {
     }
 
     template<int N>
     constexpr plugin_name(char const (&name)[N])
-        : plugin_definition_value<char const *>(validate_name(name))
+        : definition_value<char const *>(validate_name(name))
     {
     }
 };
 
 
-class plugin_description
-    : public plugin_definition_value<char const *>
+class description
+    : public definition_value<char const *>
 {
 public:
-    constexpr plugin_description()
-        : plugin_definition_value<char const *>("")
+    constexpr description()
+        : definition_value<char const *>("")
     {
     }
 
-    constexpr plugin_description(char const * description)
-        : plugin_definition_value<char const *>(description)
+    constexpr description(char const * d)
+        : definition_value<char const *>(d)
     {
     }
 };
 
 
-class plugin_help_uri
-    : public plugin_definition_value<char const *>
+class help_uri
+    : public definition_value<char const *>
 {
 public:
-    constexpr plugin_help_uri()
-        : plugin_definition_value<char const *>("")
+    constexpr help_uri()
+        : definition_value<char const *>("")
     {
     }
 
-    constexpr plugin_help_uri(char const * help_uri)
-        : plugin_definition_value<char const *>(help_uri)
+    constexpr help_uri(char const * uri)
+        : definition_value<char const *>(uri)
     {
     }
 };
 
 
-class plugin_icon
-    : public plugin_definition_value<char const *>
+class icon
+    : public definition_value<char const *>
 {
 public:
-    constexpr plugin_icon()
-        : plugin_definition_value<char const *>("")
+    constexpr icon()
+        : definition_value<char const *>("")
     {
     }
 
-    constexpr plugin_icon(char const * icon)
-        : plugin_definition_value<char const *>(icon)
-    {
-    }
-};
-
-
-class plugin_categorization_tag
-    : public plugin_definition_value<char const *>
-{
-public:
-    template<int N>
-    constexpr plugin_categorization_tag(char const (&tag)[N])
-        : plugin_definition_value<char const *>(validate_name(tag))
+    constexpr icon(char const * name)
+        : definition_value<char const *>(name)
     {
     }
 };
 
 
-class plugin_dependency
-    : public plugin_definition_value<char const *>
+class categorization_tag
+    : public definition_value<char const *>
 {
 public:
     template<int N>
-    constexpr plugin_dependency(char const (&dependency)[N])
-        : plugin_definition_value<char const *>(validate_name(dependency))
+    constexpr categorization_tag(char const (&tag)[N])
+        : definition_value<char const *>(validate_name(tag))
     {
     }
 };
 
 
-class plugin_conflict
-    : public plugin_definition_value<char const *>
+class dependency
+    : public definition_value<char const *>
 {
 public:
     template<int N>
-    constexpr plugin_conflict(char const (&conflict)[N])
-        : plugin_definition_value<char const *>(validate_name(conflict))
+    constexpr dependency(char const (&dep)[N])
+        : definition_value<char const *>(validate_name(dep))
     {
     }
 };
 
 
-class plugin_suggestion
-    : public plugin_definition_value<char const *>
+class conflict
+    : public definition_value<char const *>
 {
 public:
     template<int N>
-    constexpr plugin_suggestion(char const (&suggestion)[N])
-        : plugin_definition_value<char const *>(validate_name(suggestion))
+    constexpr conflict(char const (&c)[N])
+        : definition_value<char const *>(validate_name(c))
     {
     }
 };
 
 
-class plugin_settings_path
-    : public plugin_definition_value<char const *>
+class suggestion
+    : public definition_value<char const *>
 {
 public:
-    constexpr plugin_settings_path()
-        : plugin_definition_value<char const *>("")
+    template<int N>
+    constexpr suggestion(char const (&s)[N])
+        : definition_value<char const *>(validate_name(s))
+    {
+    }
+};
+
+
+class settings_path
+    : public definition_value<char const *>
+{
+public:
+    constexpr settings_path()
+        : definition_value<char const *>("")
     {
     }
 
     template<int N>
-    constexpr plugin_settings_path(char const (&settings_path)[N])
-        : plugin_definition_value<char const *>(validate_name(settings_path))
+    constexpr settings_path(char const (&path)[N])
+        : definition_value<char const *>(validate_name(path))
     {
     }
 };
@@ -323,24 +323,24 @@ typename std::enable_if<!std::is_same<T, F>::value && (sizeof...(ARGS) > 0), str
 
 
 template<class ...ARGS>
-constexpr plugin_definition define_plugin(ARGS ...args)
+constexpr definition define_plugin(ARGS ...args)
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-    plugin_definition def =
+    definition def =
     {
-        .f_version =                find_plugin_information<plugin_version>(args...),               // no default, must be defined
-        .f_library_version =        find_plugin_information<plugin_library_version>(args...),       // no default, must be defined
-        .f_last_modification =      find_plugin_information<plugin_last_modification>(args...),     // no default, must be defined
+        .f_version =                find_plugin_information<plugin_version>(args...),        // no default, must be defined
+        .f_library_version =        find_plugin_information<library_version>(args...),       // no default, must be defined
+        .f_last_modification =      find_plugin_information<last_modification>(args...),     // no default, must be defined
         .f_name =                   find_plugin_information<plugin_name>(args...),                  // no default, must be defined
-        .f_description =            find_plugin_information<plugin_description>(args..., plugin_description()),
-        .f_help_uri =               find_plugin_information<plugin_help_uri>(args..., plugin_help_uri()),
-        .f_icon =                   find_plugin_information<plugin_icon>(args..., plugin_icon()),
-        .f_categorization_tags =    find_plugin_set<plugin_categorization_tag>(args...),
-        .f_dependencies =           find_plugin_set<plugin_dependency>(args...),
-        .f_conflicts =              find_plugin_set<plugin_conflict>(args...),
-        .f_suggestions =            find_plugin_set<plugin_suggestion>(args...),
-        .f_settings_path =          find_plugin_information<plugin_settings_path>(args..., plugin_settings_path()),
+        .f_description =            find_plugin_information<description>(args..., description()),
+        .f_help_uri =               find_plugin_information<help_uri>(args..., help_uri()),
+        .f_icon =                   find_plugin_information<icon>(args..., icon()),
+        .f_categorization_tags =    find_plugin_set<categorization_tag>(args...),
+        .f_dependencies =           find_plugin_set<dependency>(args...),
+        .f_conflicts =              find_plugin_set<conflict>(args...),
+        .f_suggestions =            find_plugin_set<suggestion>(args...),
+        .f_settings_path =          find_plugin_information<settings_path>(args..., settings_path()),
     };
 #pragma GCC diagnostic pop
 
@@ -348,28 +348,28 @@ constexpr plugin_definition define_plugin(ARGS ...args)
 }
 
 
-// helper macros to define a plugin_definition structure
+// helper macros to define a definition structure
 //
 #define SERVERPLUGINS_START(name, major, minor) \
-    ::serverplugins::plugin_definition const g_plugin_##name##_definition = ::serverplugins::define_plugin( \
+    ::serverplugins::definition const g_##name##_definition = ::serverplugins::define_plugin( \
           ::serverplugins::plugin_version(::serverplugins::version_t(major, minor, 0)) \
-        , ::serverplugins::plugin_library_version(::serverplugins::version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH)) \
-        , ::serverplugins::plugin_last_modification(UTC_BUILD_TIME_STAMP) \
+        , ::serverplugins::library_version(::serverplugins::version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH)) \
+        , ::serverplugins::last_modification(UTC_BUILD_TIME_STAMP) \
         , ::serverplugins::plugin_name(#name)
 
 
 #define SERVERPLUGINS_END(name) \
     ); \
-    class plugin_##name##_factory : public ::serverplugins::plugin_factory { \
+    class plugin_##name##_factory : public ::serverplugins::factory { \
     public: plugin_##name##_factory() \
-        : plugin_factory(g_plugin_##name##_definition, std::make_shared<name>(*this)) \
+        : factory(g_##name##_definition, std::make_shared<name>(*this)) \
         { register_plugin(#name, instance()); } \
     plugin_##name##_factory(plugin_##name##_factory const &) = delete; \
     plugin_##name##_factory & operator = (plugin_##name##_factory const &) = delete; \
-    } g_plugin_##name##_factory; \
-    name::name(::serverplugins::plugin_factory const & factory) : plugin(factory) {} \
+    } g_##name##_factory; \
+    name::name(::serverplugins::factory const & f) : plugin(f) {} \
     name::~name() {} \
-    name::pointer_t name::instance() { return std::static_pointer_cast<name>(g_plugin_##name##_factory.instance()); }
+    name::pointer_t name::instance() { return std::static_pointer_cast<name>(g_##name##_factory.instance()); }
 
 
 

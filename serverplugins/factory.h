@@ -37,15 +37,15 @@ namespace serverplugins
 class plugin;
 
 
-class plugin_factory
+class factory
 {
 public:
-                                    plugin_factory(plugin_definition const & definition, std::shared_ptr<plugin> instance);
-                                    ~plugin_factory();
-                                    plugin_factory(plugin_factory const &) = delete;
-    plugin_factory &                operator = (plugin_factory const &) = delete;
+                                    factory(definition const & definition, std::shared_ptr<plugin> instance);
+                                    ~factory();
+                                    factory(factory const &) = delete;
+    factory &                       operator = (factory const &) = delete;
 
-    plugin_definition const &       definition() const;
+    definition const &              plugin_definition() const;
     std::shared_ptr<plugin>         instance() const;
     void                            register_plugin(char const * name, std::shared_ptr<plugin> p);
 
@@ -53,7 +53,7 @@ protected:
     void                            save_factory_in_plugin(plugin * p);
 
 private:
-    plugin_definition const &       f_definition;
+    definition const &              f_definition;
     std::shared_ptr<plugin>         f_plugin = std::shared_ptr<plugin>();
 };
 

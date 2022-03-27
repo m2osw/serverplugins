@@ -51,16 +51,16 @@ public:
 namespace detail
 {
 
-class plugin_server_factory
-    : public plugin_factory
+class server_plugin_factory
+    : public factory
 {
 public:
-    plugin_server_factory(server::pointer_t s);
-    plugin_server_factory(plugin_server_factory const &) = delete;
-    plugin_server_factory & operator = (plugin_server_factory const &) = delete;
+    server_plugin_factory(server::pointer_t s);
+    server_plugin_factory(server_plugin_factory const &) = delete;
+    server_plugin_factory & operator = (server_plugin_factory const &) = delete;
 };
 
-extern plugin_server_factory * g_plugin_server_factory;
+extern server_plugin_factory * g_server_plugin_factory;
 
 } // namespace detail
 

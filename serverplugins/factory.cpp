@@ -46,15 +46,15 @@ namespace serverplugins
  *
  * Later you can retrieve the plugin instance using the instance() function.
  * However, this is private to the plugin .cpp file. If you want a pointer
- * to the plugin, the plugin_collection::get_plugin_by_name() is probably
- * going to work better for you. Just make sure that the plugin_collection
- * is available through your user data (see plugin_collection::set_data()
+ * to the plugin, the collection::get_plugin_by_name() is probably
+ * going to work better for you. Just make sure that the collection
+ * is available through your user data (see collection::set_data()
  * for more details about that).
  *
  * \param[in] definition  The definition of the plugin.
  * \param[in] instance  The instance of the plugin.
  */
-plugin_factory::plugin_factory(plugin_definition const & definition, std::shared_ptr<plugin> instance)
+factory::factory(definition const & definition, std::shared_ptr<plugin> instance)
     : f_definition(definition)
     , f_plugin(instance)
 {
@@ -67,7 +67,7 @@ plugin_factory::plugin_factory(plugin_definition const & definition, std::shared
  * and the plugin is expected to be ready for destruction which means no other
  * object still hold a reference to it.
  */
-plugin_factory::~plugin_factory()
+factory::~factory()
 {
     // TODO: at this time this isn't working and it's not going to work any
     //       time soon, I'm afraid.
@@ -92,7 +92,7 @@ plugin_factory::~plugin_factory()
  *
  * \return A reference to the plugin definition.
  */
-plugin_definition const & plugin_factory::definition() const
+definition const & factory::plugin_definition() const
 {
     return f_definition;
 }
@@ -108,7 +108,7 @@ plugin_definition const & plugin_factory::definition() const
  *
  * \return A shared pointer to the plugin managed by this plugin factory.
  */
-std::shared_ptr<plugin> plugin_factory::instance() const
+std::shared_ptr<plugin> factory::instance() const
 {
     return f_plugin;
 }
@@ -122,14 +122,14 @@ std::shared_ptr<plugin> plugin_factory::instance() const
  * The function first verifies that the plugin name is a match. That test
  * should pretty much never fail.
  *
- * The function then calls the plugin_repository::register_plugin() function
+ * The function then calls the repository::register_plugin() function
  * which actually adds the plugin to the global list of plugins which allows
  * us to reference the same plugin in different collections.
  *
  * \param[in] name  The expected plugin name.
  * \param[in] p  The pointer to the plugin being registered.
  */
-void plugin_factory::register_plugin(char const * name, plugin::pointer_t p)
+void factory::register_plugin(char const * name, plugin::pointer_t p)
 {
     // `name` comes from the SERVERPLUGINS_END macro
     // `p->name()` comes from the SERVERPLUGINS_START macro
@@ -150,11 +150,11 @@ void plugin_factory::register_plugin(char const * name, plugin::pointer_t p)
                 + "\" (from the plugin factor definition -- SERVERPLUGINS_END).");           // LCOV_EXCL_LINE
     }
 
-    detail::plugin_repository::instance().register_plugin(p);
+    detail::repository::instance().register_plugin(p);
 }
 
 
-void plugin_factory::save_factory_in_plugin(plugin * p)
+void factory::save_factory_in_plugin(plugin * p)
 {
 #ifdef _DEBUG
     if(f_definition.f_name != "server")

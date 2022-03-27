@@ -40,22 +40,22 @@ namespace detail
 
 
 
-plugin_definition const g_plugin_server_definition = define_plugin(
+definition const g_server_plugin_definition = define_plugin(
       plugin_version(version_t(1, 0, 0))
-    , plugin_library_version(version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH))
-    , plugin_last_modification(UTC_BUILD_TIME_STAMP)
+    , library_version(version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH))
+    , last_modification(UTC_BUILD_TIME_STAMP)
     , plugin_name("server")
 );
 
-plugin_server_factory::plugin_server_factory(server::pointer_t s)
-    : plugin_factory(g_plugin_server_definition, std::dynamic_pointer_cast<plugin>(s))
+server_plugin_factory::server_plugin_factory(server::pointer_t s)
+    : factory(g_server_plugin_definition, std::dynamic_pointer_cast<plugin>(s))
 {
     save_factory_in_plugin(s.get());
     register_plugin("server", instance());
 }
 
 
-plugin_server_factory * g_plugin_server_factory = nullptr;
+server_plugin_factory * g_server_plugin_factory = nullptr;
 
 
 
@@ -73,7 +73,7 @@ server::~server()
 
 server::pointer_t server::instance()
 {
-    return std::static_pointer_cast<server>(detail::g_plugin_server_factory->instance());
+    return std::static_pointer_cast<server>(detail::g_server_plugin_factory->instance());
 }
 
 

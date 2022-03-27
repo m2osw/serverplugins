@@ -30,7 +30,7 @@ namespace serverplugins
 
 
 
-class plugin_paths
+class paths
 {
 public:
     typedef std::string                 path_t;

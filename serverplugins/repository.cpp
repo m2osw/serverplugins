@@ -50,7 +50,7 @@ namespace detail
 
 
 
-/** \class plugin_repository
+/** \class repository
  * \brief The global Plugin Repository.
  *
  * A plugin is always considered global, as far as the dlopen() function is
@@ -61,7 +61,7 @@ namespace detail
  * is to be loaded
  *
  * \note
- * The plugin_repository is a singleton.
+ * The repository is a singleton.
  */
 
 
@@ -69,7 +69,7 @@ namespace detail
 /** \brief Retrieve an instance of the plugin repository.
  *
  * Each plugin can be loaded only once, but it can be referenced in multiple
- * plugin_collection. So what we do is use a singleton, the plugin_repository,
+ * collection. So what we do is use a singleton, the repository,
  * which does the actual load of the plugin through the get_plugin(). If
  * the plugin is already loaded, then it get returned immediately. If not
  * there, then we use the dlopen() function to load it. At that point, the
@@ -79,22 +79,22 @@ namespace detail
  * get_plugin() to retrieve a plugin and the register_plugin() from the
  * factory to register the plugin in this singleton.
  *
- * \return The plugin_repository reference.
+ * \return The repository reference.
  */
-plugin_repository & plugin_repository::instance()
+repository & repository::instance()
 {
     static cppthread::mutex g_mutex;
 
     cppthread::guard lock(g_mutex);
 
-    static plugin_repository * g_plugin_repository = nullptr;
+    static repository * g_repository = nullptr;
 
-    if(g_plugin_repository == nullptr)
+    if(g_repository == nullptr)
     {
-        g_plugin_repository = new plugin_repository;
+        g_repository = new repository;
     }
 
-    return *g_plugin_repository;
+    return *g_repository;
 }
 
 
@@ -117,7 +117,7 @@ plugin_repository & plugin_repository::instance()
  *
  * \return The pointer to the plugin.
  */
-plugin::pointer_t plugin_repository::get_plugin(plugin_names::filename_t const & filename)
+plugin::pointer_t repository::get_plugin(names::filename_t const & filename)
 {
     cppthread::guard lock(f_mutex);
 
@@ -177,19 +177,19 @@ plugin::pointer_t plugin_repository::get_plugin(plugin_names::filename_t const &
  * is the one used to actually register the plugin.
  *
  * When loading a new plugin you should call the
- * plugin_repository::get_plugin() with the plugin filename. If that plugin
+ * repository::get_plugin() with the plugin filename. If that plugin
  * was already loaded, then that pointer is returned and this registration
  * function is never called.
  *
  * However, if the plugin was not yet loaded, we call the dlopen() which
  * creates a plugin specific factory, which in turn calls the
- * plugin_factory::register_plugin() function, which finally calls this
+ * factory::register_plugin() function, which finally calls this
  * very function to register the plugin in the global repository.
  *
- * The plugin_factory::register_plugin() is responsible for verifying that
+ * The factory::register_plugin() is responsible for verifying that
  * the plugin name is valid.
  */
-void plugin_repository::register_plugin(plugin::pointer_t p)
+void repository::register_plugin(plugin::pointer_t p)
 {
     p->f_filename = f_register_filename;
 

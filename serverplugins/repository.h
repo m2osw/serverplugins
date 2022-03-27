@@ -35,17 +35,17 @@ namespace detail
 
 
 // WARNING: this is a detail (internal) class, do not use directly
-class plugin_repository
+class repository
 {
 public:
-    static plugin_repository &  instance();
-    plugin::pointer_t           get_plugin(plugin_names::filename_t const & filename);
+    static repository &  instance();
+    plugin::pointer_t           get_plugin(names::filename_t const & filename);
     void                        register_plugin(plugin::pointer_t p);
 
 private:
     cppthread::mutex            f_mutex = cppthread::mutex();
     plugin::map_t               f_plugins = plugin::map_t();        // WARNING: this map is sorted by filename
-    plugin_names::filename_t    f_register_filename = plugin_names::filename_t();
+    names::filename_t           f_register_filename = names::filename_t();
 };
 
 

@@ -41,14 +41,14 @@ namespace serverplugins
 
 
 
-class plugin_collection
+class collection
 {
 public:
-    typedef std::shared_ptr<plugin_collection>  pointer_t;
+    typedef std::shared_ptr<collection>  pointer_t;
 
-                                        plugin_collection(plugin_names const & names);
-                                        plugin_collection(plugin_collection const &) = delete;
-    plugin_collection &                 operator = (plugin_collection const &) = delete;
+                                        collection(names const & n);
+                                        collection(collection const &) = delete;
+    collection &                        operator = (collection const &) = delete;
 
     bool                                load_plugins(server::pointer_t s);
     bool                                is_loaded(std::string const & name) const;
@@ -67,7 +67,7 @@ public:
      * are the same) and one collection may know about a plugin and another
      * collection may not know about a plugin. At this time, the library does not
      * offer a direct access to the global list so you can't determine whether
-     * a specific plugin is loaded through a plugin_collection.
+     * a specific plugin is loaded through a collection.
      *
      * \param[in] name  The name of the plugin to search.
      *
@@ -94,7 +94,7 @@ public:
 
 private:
     cppthread::mutex                    f_mutex = cppthread::mutex();
-    plugin_names                        f_names;
+    names                               f_names;
     plugin::map_t                       f_plugins_by_name = plugin::map_t();        // plugins sorted by name only
     plugin::vector_t                    f_ordered_plugins = plugin::vector_t();     // sorted plugins
     void *                              f_data = nullptr;

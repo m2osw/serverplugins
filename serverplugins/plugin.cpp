@@ -24,29 +24,6 @@
 #include    "serverplugins/factory.h"
 
 
-// snaplogger
-//
-//#include    "snaplogger/message.h"
-
-
-// cppthread
-//
-//#include    "cppthread/guard.h"
-
-
-// snapdev
-//
-//#include    <snapdev/glob_to_list.h>
-//#include    <snapdev/join_strings.h>
-//#include    <snapdev/not_used.h>
-//#include    <snapdev/tokenize_string.h>
-
-
-// C
-//
-//#include    <dlfcn.h>
-
-
 // last include
 //
 #include    <snapdev/poison.h>
@@ -94,7 +71,7 @@ plugin::plugin()
  *
  * \param[in] factory  The factory that created this plugin.
  */
-plugin::plugin(plugin_factory const & factory)
+plugin::plugin(factory const & factory)
     : f_factory(&factory)
 {
 }
@@ -123,7 +100,7 @@ plugin::~plugin()           // LCOV_EXCL_LINE
  */
 version_t plugin::version() const
 {
-    return f_factory->definition().f_version;
+    return f_factory->plugin_definition().f_version;
 }
 
 
@@ -134,7 +111,7 @@ version_t plugin::version() const
  */
 time_t plugin::last_modification() const
 {
-    return f_factory->definition().f_last_modification;
+    return f_factory->plugin_definition().f_last_modification;
 }
 
 
@@ -151,7 +128,7 @@ time_t plugin::last_modification() const
  */
 std::string plugin::name() const
 {
-    return f_factory->definition().f_name;
+    return f_factory->plugin_definition().f_name;
 }
 
 
@@ -162,8 +139,8 @@ std::string plugin::name() const
  * function.
  *
  * \note
- * Whenever the plugin registers itself via the plugin_repository class,
- * the plugin_repository takes that chance to save the filename to the
+ * Whenever the plugin registers itself via the repository class,
+ * the repository takes that chance to save the filename to the
  * plugin class. This path is one to one the one used with the dlopen()
  * function call.
  *
@@ -183,7 +160,7 @@ std::string plugin::filename() const
  */
 std::string plugin::description() const
 {
-    return f_factory->definition().f_description;
+    return f_factory->plugin_definition().f_description;
 }
 
 
@@ -196,7 +173,7 @@ std::string plugin::description() const
  */
 std::string plugin::help_uri() const
 {
-    return f_factory->definition().f_help_uri;
+    return f_factory->plugin_definition().f_help_uri;
 }
 
 
@@ -210,7 +187,7 @@ std::string plugin::help_uri() const
  */
 std::string plugin::icon() const
 {
-    return f_factory->definition().f_icon;
+    return f_factory->plugin_definition().f_icon;
 }
 
 
@@ -224,7 +201,7 @@ std::string plugin::icon() const
  */
 string_set_t plugin::categorization_tags() const
 {
-    return f_factory->definition().f_categorization_tags;
+    return f_factory->plugin_definition().f_categorization_tags;
 }
 
 
@@ -232,7 +209,7 @@ string_set_t plugin::categorization_tags() const
  *
  * This function returns a list of dependencies that this plugin needs to
  * run properly. You do not have to specify all the dependencies when you
- * want to load a plugin. The plugin_collection::load_plugins() will
+ * want to load a plugin. The collection::load_plugins() will
  * automatically add those dependencies as it finds them.
  *
  * \return The list of plugin names that need to be loaded for this plugin
@@ -240,7 +217,7 @@ string_set_t plugin::categorization_tags() const
  */
 string_set_t plugin::dependencies() const
 {
-    return f_factory->definition().f_dependencies;
+    return f_factory->plugin_definition().f_dependencies;
 }
 
 
@@ -257,7 +234,7 @@ string_set_t plugin::dependencies() const
  */
 string_set_t plugin::conflicts() const
 {
-    return f_factory->definition().f_conflicts;
+    return f_factory->plugin_definition().f_conflicts;
 }
 
 
@@ -270,7 +247,7 @@ string_set_t plugin::conflicts() const
  */
 string_set_t plugin::suggestions() const
 {
-    return f_factory->definition().f_suggestions;
+    return f_factory->plugin_definition().f_suggestions;
 }
 
 
@@ -284,11 +261,20 @@ string_set_t plugin::suggestions() const
  */
 std::string plugin::settings_path() const
 {
-    return f_factory->definition().f_settings_path;
+    return f_factory->plugin_definition().f_settings_path;
 }
 
 
-plugin_collection * plugin::collection() const
+/** \brief The first collection this plugin was loaded in.
+ *
+ * \warning
+ * This function returns the first collection the plugin was loaded in. If
+ * the same plugin gets loaded in different collections, then the plugin
+ * is not properly attached to each collection.
+ *
+ * \return The collection this plugin is part of.
+ */
+collection * plugin::plugins() const
 {
     return f_collection;
 }
@@ -308,8 +294,8 @@ plugin_collection * plugin::collection() const
  *
  * The default bootstrap() function does nothing at the moment.
  *
- * \sa plugin_collection::set_data()
- * \sa plugin_collection::get_data<T>()
+ * \sa collection::set_data()
+ * \sa collection::get_data<T>()
  */
 void plugin::bootstrap()
 {

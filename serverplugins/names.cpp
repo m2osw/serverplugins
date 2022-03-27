@@ -46,30 +46,30 @@ namespace serverplugins
 
 
 
-/** \class plugin_names
+/** \class names
  * \brief Manage a list of plugins to be loaded.
  *
  * Whenever you start a plugin system, you need to specify the list of
  * plugins you want to load. This is done by adding names to a
- * plugin_names object.
+ * names object.
  *
- * In order to generate a list of plugin_names, you must first setup
- * a plugin_paths which defines the location where the plugins are
+ * In order to generate a list of names, you must first setup
+ * a paths which defines the location where the plugins are
  * searched, which this class does each time a plugin name is added
  * to the object (see push(), add() and find_plugins() for details).
  *
- * See the plugin_collection class for more information and an example
+ * See the collection class for more information and an example
  * on how to load plugins for a system.
  */
 
 
 
 
-/** \brief Initialize a plugin_names object.
+/** \brief Initialize a names object.
  *
- * The list of plugins has to be defined in a plugin_names object. It is done
- * this way because the list of plugin_paths becomes read-only once in the
- * list of paths of the plugin_names object. We actually make a deep copy of
+ * The list of plugins has to be defined in a names object. It is done
+ * this way because the list of paths becomes read-only once in the
+ * list of paths of the names object. We actually make a deep copy of
  * the paths so we can be sure you can't add more paths later.
  *
  * The \p script_names parameter is used to determine whether the name
@@ -81,7 +81,7 @@ namespace serverplugins
  * \param[in] prevent_script_names  true if the plugin names are going to
  * be used in scripts.
  */
-plugin_names::plugin_names(plugin_paths const & paths, bool prevent_script_names)
+names::names(paths const & paths, bool prevent_script_names)
     : f_paths(paths)
     , f_prevent_script_names(prevent_script_names)
 {
@@ -108,7 +108,7 @@ plugin_names::plugin_names(plugin_paths const & paths, bool prevent_script_names
  *
  * \return true if the name is considered valid.
  */
-bool plugin_names::validate(name_t const & name)
+bool names::validate(name_t const & name)
 {
     if(name.length() == 0)
     {
@@ -168,7 +168,7 @@ bool plugin_names::validate(name_t const & name)
  *
  * \return true if \p word is a reserved keyword.
  */
-bool plugin_names::is_emcascript_reserved(std::string const & word)
+bool names::is_emcascript_reserved(std::string const & word)
 {
     switch(word[0])
     {
@@ -308,7 +308,7 @@ bool plugin_names::is_emcascript_reserved(std::string const & word)
  * plugin on disk using the specified paths.
  *
  * This function transforms such a a bare name in a filename. It goes through
- * the list of paths (see the plugin_names() constructor) and stops once the
+ * the list of paths (see the names() constructor) and stops once the
  * first matching plugin filename was found.
  *
  * If no such plugin is found, the function returns an empty string. Whether
@@ -322,9 +322,9 @@ bool plugin_names::is_emcascript_reserved(std::string const & word)
  *
  * \return The full filename matching this bare plugin name or an empty string.
  */
-plugin_names::filename_t plugin_names::to_filename(name_t const & name)
+names::filename_t names::to_filename(name_t const & name)
 {
-    auto check = [&name](plugin_paths::path_t const & path)
+    auto check = [&name](paths::path_t const & path)
     {
         // "path/<name>.so"
         //
@@ -377,7 +377,7 @@ plugin_names::filename_t plugin_names::to_filename(name_t const & name)
     std::size_t const max(f_paths.size());
     for(std::size_t idx(0); idx < max; ++idx)
     {
-        plugin_paths::path_t path(f_paths.at(idx));
+        paths::path_t path(f_paths.at(idx));
         path += '/';
         filename_t const filename(check(path));
         if(!filename.empty())
@@ -420,7 +420,7 @@ plugin_names::filename_t plugin_names::to_filename(name_t const & name)
  *
  * \param[in] name  The name or filename of a plugin to be loaded.
  */
-void plugin_names::push(name_t const & name)
+void names::push(name_t const & name)
 {
     name_t n;
     filename_t fn;
@@ -498,11 +498,11 @@ void plugin_names::push(name_t const & name)
  *
  * \param[in] set  A comma separated list of plugin names.
  */
-void plugin_names::add(std::string const & set)
+void names::add(std::string const & set)
 {
-    std::vector<std::string> names;
-    snapdev::tokenize_string(names, set, ",", true, {' ', '\t', '\r', '\n'});
-    for(auto const & n : names)
+    std::vector<std::string> list;
+    snapdev::tokenize_string(list, set, ",", true, {' ', '\t', '\r', '\n'});
+    for(auto const & n : list)
     {
         push(n);
     }
@@ -528,7 +528,7 @@ void plugin_names::add(std::string const & set)
  *
  * \return The map of name/filename pairs.
  */
-plugin_names::names_t plugin_names::names() const
+names::names_t names::map() const
 {
     return f_names;
 }
@@ -576,7 +576,7 @@ plugin_names::names_t plugin_names::names() const
  * \param[in] prefix  The prefix used to search the plugins.
  * \param[in] suffix  The suffix used to search the plugins.
  */
-void plugin_names::find_plugins(name_t const & prefix, name_t const & suffix)
+void names::find_plugins(name_t const & prefix, name_t const & suffix)
 {
     snapdev::glob_to_list<std::vector<std::string>> glob;
 

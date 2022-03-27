@@ -40,16 +40,10 @@ DECLARE_LOGIC_ERROR(serverplugins_logic_error);
 DECLARE_OUT_OF_RANGE(serverplugins_out_of_range);
 
 DECLARE_MAIN_EXCEPTION(serverplugins_exception);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_already_exists);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_in_use_error);
 DECLARE_EXCEPTION(serverplugins_exception, serverplugins_invalid_error);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_mutex_failed_error);
+DECLARE_EXCEPTION(serverplugins_exception, serverplugins_invalid_order);
 DECLARE_EXCEPTION(serverplugins_exception, serverplugins_name_mismatch);
 DECLARE_EXCEPTION(serverplugins_exception, serverplugins_not_found);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_not_locked_error);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_not_locked_once_error);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_not_started);
-//DECLARE_EXCEPTION(serverplugins_exception, serverplugins_system_error);
 
 
 

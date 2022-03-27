@@ -77,8 +77,9 @@ install(
 install(
     FILES
         exception.h
-        plugins.h
+        plugin.h
         collection.h
+        definition.h
         factory.h
         names.h
         paths.h

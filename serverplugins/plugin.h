@@ -35,12 +35,12 @@ namespace serverplugins
 
 
 
-class plugin_collection;
-class plugin_factory;
+class collection;
+class factory;
 
 namespace detail
 {
-class plugin_repository;
+class repository;
 } // namespace detail
 
 class plugin
@@ -52,15 +52,15 @@ public:
                                         map_t;          // sorted by name
 
                                         plugin();       // for the server
-                                        plugin(plugin_factory const & factory);
+                                        plugin(factory const & factory);
                                         plugin(plugin const &) = delete;
     virtual                             ~plugin();
     plugin &                            operator = (plugin const &) = delete;
 
     version_t                           version() const;
     time_t                              last_modification() const;
-    plugin_names::name_t                name() const;
-    plugin_names::filename_t            filename() const;
+    names::name_t                       name() const;
+    names::filename_t                   filename() const;
     std::string                         description() const;
     std::string                         help_uri() const;
     std::string                         icon() const;
@@ -69,25 +69,25 @@ public:
     string_set_t                        conflicts() const;
     string_set_t                        suggestions() const;
     std::string                         settings_path() const;
-    plugin_collection *                 collection() const;
+    collection *                        plugins() const;
 
     virtual void                        bootstrap();
     virtual time_t                      do_update(time_t last_updated);
 
 private:
-    friend class detail::plugin_repository;
-    friend class plugin_collection;
-    friend class plugin_factory;
+    friend class detail::repository;
+    friend class collection;
+    friend class factory;
 
-    plugin_factory const *              f_factory = nullptr;
-    plugin_names::filename_t            f_filename = std::string();
-    plugin_collection *                 f_collection = nullptr;
+    factory const *              f_factory = nullptr;
+    names::filename_t            f_filename = std::string();
+    collection *                 f_collection = nullptr;
 };
 
 
 #define SERVERPLUGINS_DEFAULTS(name) \
     typedef std::shared_ptr<name> pointer_t; \
-    name(::serverplugins::plugin_factory const & factory); \
+    name(::serverplugins::factory const & factory); \
     name(name const &) = delete; \
     virtual ~name(); \
     name & operator = (name const &) = delete; \
@@ -257,7 +257,7 @@ private:
  */
 #define SERVERPLUGINS_PLUGIN_UPDATE(year, month, day, hour, minute, second, function) \
     if(last_plugin_update > SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second) * 1000000LL) { \
-        throw plugins::plugin_exception_invalid_order("the updates in your do_update() functions must appear in increasing order in regard to date and time"); \
+        throw ::serverplugins::serverplugins_invalid_order("the updates in your do_update() functions must appear in increasing order in regard to date and time"); \
     } \
     last_plugin_update = SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second) * 1000000LL; \
     if(last_updated < last_plugin_update) { \

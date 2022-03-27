@@ -34,14 +34,14 @@ namespace serverplugins
 
 
 
-class plugin_names
+class names
 {
 public:
     typedef std::string                     name_t;
     typedef std::string                     filename_t;
     typedef std::map<name_t, filename_t>    names_t;
 
-                                        plugin_names(plugin_paths const & paths, bool script_names = false);
+                                        names(paths const & paths, bool script_names = false);
 
     bool                                validate(name_t const & name);
     bool                                is_emcascript_reserved(std::string const & word);
@@ -49,12 +49,12 @@ public:
     filename_t                          to_filename(name_t const & name);
     void                                push(name_t const & name);
     void                                add(std::string const & set);
-    names_t                             names() const;
+    names_t                             map() const;
 
     void                                find_plugins(name_t const & prefix = name_t(), name_t const & suffix = name_t());
 
 private:
-    plugin_paths const                  f_paths;
+    paths const                         f_paths;
     bool const                          f_prevent_script_names = false;
     names_t                             f_names = names_t();
 };

@@ -46,23 +46,23 @@ namespace optional_namespace
 
 
 SERVERPLUGINS_START(testme, 5, 3)
-    , ::serverplugins::plugin_description("a test plugin to make sure it all works.")
-    , ::serverplugins::plugin_help_uri("https://snapwebsites.org/")
-    , ::serverplugins::plugin_icon("cute.ico")
-    , ::serverplugins::plugin_categorization_tag("test")
-    , ::serverplugins::plugin_categorization_tag("powerful")
-    , ::serverplugins::plugin_categorization_tag("software")
-    , ::serverplugins::plugin_conflict("other_test")
-    , ::serverplugins::plugin_conflict("power_test")
-    , ::serverplugins::plugin_conflict("unknown")
-    , ::serverplugins::plugin_suggestion("beautiful")
+    , ::serverplugins::description("a test plugin to make sure it all works.")
+    , ::serverplugins::help_uri("https://snapwebsites.org/")
+    , ::serverplugins::icon("cute.ico")
+    , ::serverplugins::categorization_tag("test")
+    , ::serverplugins::categorization_tag("powerful")
+    , ::serverplugins::categorization_tag("software")
+    , ::serverplugins::conflict("other_test")
+    , ::serverplugins::conflict("power_test")
+    , ::serverplugins::conflict("unknown")
+    , ::serverplugins::suggestion("beautiful")
 SERVERPLUGINS_END(testme)
 
 
 void testme::bootstrap()
 {
     //data_t * d(reinterpret_cast<data_t *>(data));
-    daemon::pointer_t d(collection()->get_server<daemon>());
+    daemon::pointer_t d(plugins()->get_server<daemon>());
 
     // somehow, the test environment thinks we're not inside the
     // CATCH_TEST_CASE() when any functions here gets called

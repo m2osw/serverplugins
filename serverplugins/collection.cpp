@@ -49,14 +49,14 @@ namespace serverplugins
 
 
 
-/** \class plugin_collection
+/** \class collection
  * \brief Handle a collection of plugins.
  *
- * In order to create a plugin_collection, you first need to have a list
- * of plugin names (and filenames), a.k.a. a plugin_names object.
+ * In order to create a collection, you first need to have a list
+ * of plugin names (and filenames), a.k.a. a names object.
  *
- * In order to create a plugin_names object, you first need to create a
- * plugin_paths object. These are lists of paths where the plugin files
+ * In order to create a names object, you first need to create a
+ * paths object. These are lists of paths where the plugin files
  * are searched before being loaded.
  *
  * The order is important and prevents you from modifying the paths while
@@ -82,14 +82,14 @@ namespace serverplugins
  *
  *     ...
  *
- *     plugin_paths p;
+ *     paths p;
  *     p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
  *
- *     plugin_names n(p, true);
+ *     names n(p, true);
  *     n.add("network, cloud-system");
  *     // or:  n.find_plugins();   to read all the plugins
  *
- *     plugin_collection c(n);
+ *     collection c(n);
  *     c.set_data(&my_app);
  *     c.load_plugins(d);   // your daemon is passed down to all plugins now
  * \endcode
@@ -97,12 +97,12 @@ namespace serverplugins
  * The set_data() is still available, but the data is not passed
  * down through plugin::bootstrap(). Instead, you use the plugin::collection()
  * function and the get_data<T>() template. In most cases, you may be able to
- * use the get_server() instead.
+ * use the get_server<T>() instead.
  *
- * The plugin_names makes a deep copy of the plugin_paths.
+ * The names makes a deep copy of the paths.
  *
- * The plugin_collection makes a deep copy of the plugin_names (meaning that
- * it also makes a new copy of the plugin_paths).
+ * The collection makes a deep copy of the names (meaning that
+ * it also makes a new copy of the paths).
  */
 
 
@@ -125,8 +125,8 @@ namespace serverplugins
  * \sa set_data();
  * \sa load_plugins();
  */
-plugin_collection::plugin_collection(plugin_names const & names)
-    : f_names(names)
+collection::collection(names const & n)
+    : f_names(n)
 {
 }
 
@@ -141,7 +141,7 @@ plugin_collection::plugin_collection(plugin_names const & names)
  *
  * \sa plugin::bootstrap()
  */
-void plugin_collection::set_data(void * data)
+void collection::set_data(void * data)
 {
     f_data = data;
 }
@@ -150,7 +150,7 @@ void plugin_collection::set_data(void * data)
 /** \brief Load all the plugins in this collection.
  *
  * When you create a collection, you pass a list of names (via the
- * plugin_names object). This function uses that list to load all the
+ * names object). This function uses that list to load all the
  * corresponding plugins from disk.
  *
  * The constructor of the plugins will be called and you can do local
@@ -184,7 +184,7 @@ void plugin_collection::set_data(void * data)
  *
  * \return true if the loading worked on all the plugins, false otherwise.
  */
-bool plugin_collection::load_plugins(server::pointer_t s)
+bool collection::load_plugins(server::pointer_t s)
 {
     cppthread::guard lock(f_mutex);
 
@@ -197,32 +197,32 @@ bool plugin_collection::load_plugins(server::pointer_t s)
     // and (2) register the server as f_server and f_plugins_by_name["server"]
     //
     f_server = s;
-    detail::g_plugin_server_factory = new detail::plugin_server_factory(s);
+    detail::g_server_plugin_factory = new detail::server_plugin_factory(s);
     f_plugins_by_name["server"] = s;
 
 #ifdef _DEBUG
     if(s->name() != "server")
     {
-        throw serverplugins_logic_error("the name in the plugin_server_factory definition must be \"server\".");
+        throw serverplugins_logic_error("the name in the server_factory definition must be \"server\".");
     }
 #endif
 
-    detail::plugin_repository & repository(detail::plugin_repository::instance());
+    detail::repository & repository(detail::repository::instance());
     bool changed(true);
     bool good(true);
     while(changed)
     {
         changed = false;
 
-        plugin_names::names_t names(f_names.names());
-        for(auto const & name_filename : names)
+        names::names_t n(f_names.map());
+        for(auto const & name_filename : n)
         {
             // the main process is considered to be the "server" plugin and it
             // will eventually be added to the list under that name, so we can't
             // allow this name here
             //
             // Note: this should not happen since we don't allow the addition of
-            // the "server" name to the list of names (see plugin_names::push()
+            // the "server" name to the list of names (see names::push()
             // for details)
             //
             if(name_filename.first == "server")
@@ -286,7 +286,7 @@ bool plugin_collection::load_plugins(server::pointer_t s)
             string_set_t const dependencies(p->dependencies());
             for(auto & d : dependencies)
             {
-                if(names.find(d) == names.end())
+                if(n.find(d) == n.end())
                 {
                     f_names.push(d);
                     changed = true;
@@ -350,7 +350,7 @@ bool plugin_collection::load_plugins(server::pointer_t s)
  *
  * \return True if the plugin is found, false otherwise.
  */
-bool plugin_collection::is_loaded(std::string const & name) const
+bool collection::is_loaded(std::string const & name) const
 {
     return f_plugins_by_name.find(name) != f_plugins_by_name.end();
 }

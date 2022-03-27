@@ -54,11 +54,11 @@
 
 
 
-CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
+CATCH_TEST_CASE("paths", "[plugins] [paths]")
 {
     CATCH_START_SECTION("empty size/at when empty")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         CATCH_REQUIRE(p.size() == 0);
 
@@ -71,11 +71,11 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("canonicalize empty path")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         CATCH_REQUIRE_FALSE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
-                  p.canonicalize(serverplugins::plugin_paths::path_t())
+                  p.canonicalize(serverplugins::paths::path_t())
                 , serverplugins::serverplugins_invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
@@ -83,7 +83,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
         p.set_allow_redirects(true);
         CATCH_REQUIRE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
-                  p.canonicalize(serverplugins::plugin_paths::path_t())
+                  p.canonicalize(serverplugins::paths::path_t())
                 , serverplugins::serverplugins_invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
@@ -91,7 +91,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
         p.set_allow_redirects(false);
         CATCH_REQUIRE_FALSE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
-                  p.canonicalize(serverplugins::plugin_paths::path_t())
+                  p.canonicalize(serverplugins::paths::path_t())
                 , serverplugins::serverplugins_invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
@@ -102,9 +102,9 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
     {
         for(int idx(1); idx <= 10; ++idx)
         {
-            serverplugins::plugin_paths p;
+            serverplugins::paths p;
 
-            serverplugins::plugin_paths::path_t root(idx, '/');
+            serverplugins::paths::path_t root(idx, '/');
             CATCH_REQUIRE(p.canonicalize(root) == "/");
             p.set_allow_redirects(true);
             CATCH_REQUIRE(p.canonicalize(root) == "/");
@@ -116,7 +116,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("canonicalize root path with one \"..\"")
     {
-        std::vector<serverplugins::plugin_paths::path_t> paths =
+        std::vector<serverplugins::paths::path_t> paths =
         {
             "this",
             "long",
@@ -126,13 +126,13 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
             "path",
         };
 
-        for(serverplugins::plugin_paths::path_t::size_type l(1); l < paths.size(); ++l)
+        for(serverplugins::paths::path_t::size_type l(1); l < paths.size(); ++l)
         {
-            serverplugins::plugin_paths p;
-            serverplugins::plugin_paths::path_t expected;
+            serverplugins::paths p;
+            serverplugins::paths::path_t expected;
             int count(rand() % 10 + 1);
-            serverplugins::plugin_paths::path_t path(count , '/');
-            for(serverplugins::plugin_paths::path_t::size_type c(0); c < l; ++c)
+            serverplugins::paths::path_t path(count , '/');
+            for(serverplugins::paths::path_t::size_type c(0); c < l; ++c)
             {
                 if(paths[c] != ".."
                 && (c + 1 >= l || paths[c + 1] != ".."))
@@ -144,7 +144,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
                 path += paths[c];
 
                 count = rand() % 10 + 1;
-                serverplugins::plugin_paths::path_t sep(count , '/');
+                serverplugins::paths::path_t sep(count , '/');
                 path += sep;
             }
 
@@ -168,7 +168,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("canonicalize root path with too many \"..\"")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         p.set_allow_redirects(false);
         CATCH_REQUIRE(p.canonicalize("/this/long/../../../..//") == "/");
@@ -192,7 +192,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("canonicalize relative path with \".\" and \"..\"")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         CATCH_REQUIRE(p.canonicalize("this/./relative/./angle/.././path//cleaned/up") == "this/relative/path/cleaned/up");
         p.set_allow_redirects(true);
@@ -204,7 +204,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("canonicalize relative path with too many \"..\"")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         p.set_allow_redirects(true);
         CATCH_REQUIRE(p.canonicalize("this/long/../../../..//") == "../..");
@@ -246,7 +246,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("push the same paths")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         p.push("path/one");
         p.push("path/two");
@@ -296,7 +296,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("push invalid path")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this/long/../.././../root//home//path//")
@@ -308,7 +308,7 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
     CATCH_START_SECTION("add paths")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
 
         p.set_allow_redirects(true);
         p.add("this/long/../../../..//"
@@ -326,25 +326,25 @@ CATCH_TEST_CASE("plugin_paths", "[plugins] [paths]")
 
 
 
-CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
+CATCH_TEST_CASE("names", "[plugins] [names]")
 {
     CATCH_START_SECTION("empty by default")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
 
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
 
-        CATCH_REQUIRE(n.names().empty());
+        CATCH_REQUIRE(n.map().empty());
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("validate names")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
 
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
 
         CATCH_CHECK(n.validate("_"));
         CATCH_CHECK(n.validate("_valid"));
@@ -352,7 +352,7 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
         CATCH_CHECK(n.validate("_9"));
 
         CATCH_CHECK_FALSE(n.validate(""));
-        CATCH_CHECK_FALSE(n.validate(serverplugins::plugin_names::name_t()));
+        CATCH_CHECK_FALSE(n.validate(serverplugins::names::name_t()));
         CATCH_CHECK_FALSE(n.validate("0"));
         CATCH_CHECK_FALSE(n.validate("9_"));
         CATCH_CHECK_FALSE(n.validate("dotted.word"));
@@ -401,10 +401,10 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
 
     CATCH_START_SECTION("validate non-script names")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
 
-        serverplugins::plugin_names n(p, true);
+        serverplugins::names n(p, true);
 
         CATCH_CHECK(n.validate("_"));
         CATCH_CHECK(n.validate("_valid"));
@@ -412,7 +412,7 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
         CATCH_CHECK(n.validate("_9"));
 
         CATCH_CHECK_FALSE(n.validate(""));
-        CATCH_CHECK_FALSE(n.validate(serverplugins::plugin_names::name_t()));
+        CATCH_CHECK_FALSE(n.validate(serverplugins::names::name_t()));
         CATCH_CHECK_FALSE(n.validate("0"));
         CATCH_CHECK_FALSE(n.validate("9_"));
         CATCH_CHECK_FALSE(n.validate("dotted.word"));
@@ -506,14 +506,14 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
 
     CATCH_START_SECTION("add one unknown and one known name")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
 
-        serverplugins::plugin_names n(p, true);
+        serverplugins::names n(p, true);
 
         // test with an obviously unexistant plugin
         //
-        serverplugins::plugin_names::filename_t filename(n.to_filename("unknown"));
+        serverplugins::names::filename_t filename(n.to_filename("unknown"));
         CATCH_REQUIRE(filename.empty());
 
         // test with the real thing
@@ -590,12 +590,12 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
 
     CATCH_START_SECTION("test filename without any paths")
     {
-        serverplugins::plugin_paths p;
-        serverplugins::plugin_names n(p);
+        serverplugins::paths p;
+        serverplugins::names n(p);
 
         // test with an obviously unexistant plugin
         //
-        serverplugins::plugin_names::filename_t filename(n.to_filename("unknown"));
+        serverplugins::names::filename_t filename(n.to_filename("unknown"));
         CATCH_REQUIRE(filename.empty());
 
         // test with the real thing
@@ -672,49 +672,49 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
 
     CATCH_START_SECTION("add a new names by hand (push)")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
 
         // test with an obviously unexistant plugin
         //
         n.push("testme");
-        CATCH_REQUIRE(n.names().size() == 1);
-        CATCH_REQUIRE(n.names().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
+        CATCH_REQUIRE(n.map().size() == 1);
+        CATCH_REQUIRE(n.map().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("add a new names by hand (add)")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
 
         // TODO: look into having multiple plugins because that would allow
         //       us to test ':'
         //
         n.add("testme");
-        CATCH_REQUIRE(n.names().size() == 1);
-        CATCH_REQUIRE(n.names().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
+        CATCH_REQUIRE(n.map().size() == 1);
+        CATCH_REQUIRE(n.map().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("add a names through the find_plugins() function")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
         n.find_plugins();
-        CATCH_REQUIRE(n.names().size() == 1);
-        CATCH_REQUIRE(n.names().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
+        CATCH_REQUIRE(n.map().size() == 1);
+        CATCH_REQUIRE(n.map().begin()->second == CMAKE_BINARY_DIR "/tests/libtestme.so");
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("add invalid names")
     {
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("invalid-name")
@@ -744,18 +744,18 @@ CATCH_TEST_CASE("plugin_names", "[plugins] [names]")
 }
 
 
-CATCH_TEST_CASE("plugin_collection", "[plugins] [collection]")
+CATCH_TEST_CASE("collection", "[plugins] [collection]")
 {
     CATCH_START_SECTION("load the plugin")
     {
         char const * argv[] = { "/usr/sbin/daemon", nullptr };
         optional_namespace::daemon::pointer_t d(std::make_shared<optional_namespace::daemon>(1, const_cast<char **>(argv)));
 
-        serverplugins::plugin_paths p;
+        serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
-        serverplugins::plugin_names n(p);
+        serverplugins::names n(p);
         n.find_plugins();
-        serverplugins::plugin_collection c(n);
+        serverplugins::collection c(n);
         bool const loaded(c.load_plugins(d));
         CATCH_REQUIRE(loaded);
         optional_namespace::testme::pointer_t r(c.get_plugin_by_name<optional_namespace::testme>("testme"));

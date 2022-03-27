@@ -41,12 +41,12 @@ namespace serverplugins
 
 
 
-/** \class plugin_paths
+/** \class paths
  * \brief The list of paths.
  *
- * The plugin_paths holds a list of paths that are used to search the
+ * The paths holds a list of paths that are used to search the
  * plugins. By default this list is empty which is viewed as a list
- * of having just "." as the path by the plugin_names::find_plugins().
+ * of having just "." as the path by the names::find_plugins().
  *
  * To add plugin paths, use the push(), add(), and set() functions to
  * see how to add new paths. In most cases, the set() function is ideal
@@ -63,7 +63,7 @@ namespace serverplugins
  *
  * This function returns the number of paths this set has.
  */
-std::size_t plugin_paths::size() const
+std::size_t paths::size() const
 {
     return f_paths.size();
 }
@@ -78,7 +78,7 @@ std::size_t plugin_paths::size() const
  * \return The path defined at index \p idx. If \p idx is too large, then
  * this function returns an empty string.
  */
-std::string plugin_paths::at(std::size_t idx) const
+std::string paths::at(std::size_t idx) const
 {
     if(idx >= f_paths.size())
     {
@@ -108,7 +108,7 @@ std::string plugin_paths::at(std::size_t idx) const
  * \sa get_allow_redirects()
  * \sa canonicalize()
  */
-void plugin_paths::set_allow_redirects(bool allow)
+void paths::set_allow_redirects(bool allow)
 {
     f_allow_redirects = allow;
 }
@@ -127,7 +127,7 @@ void plugin_paths::set_allow_redirects(bool allow)
  *
  * \sa set_allow_redirects()
  */
-bool plugin_paths::get_allow_redirects() const
+bool paths::get_allow_redirects() const
 {
     return f_allow_redirects;
 }
@@ -155,7 +155,7 @@ bool plugin_paths::get_allow_redirects() const
  *
  * \sa push()
  */
-plugin_paths::path_t plugin_paths::canonicalize(path_t const & path)
+paths::path_t paths::canonicalize(path_t const & path)
 {
     if(path.empty())
     {
@@ -243,7 +243,7 @@ plugin_paths::path_t plugin_paths::canonicalize(path_t const & path)
  * \sa add()
  * \sa canonicalize()
  */
-void plugin_paths::push(path_t const & path)
+void paths::push(path_t const & path)
 {
     path_t const canonicalized(canonicalize(path));
     auto it(std::find(f_paths.begin(), f_paths.end(), canonicalized));
@@ -269,13 +269,13 @@ void plugin_paths::push(path_t const & path)
  *
  * \sa add()
  */
-void plugin_paths::add(std::string const & set)
+void paths::add(std::string const & set)
 {
-    std::vector<std::string> paths;
-    snapdev::tokenize_string(paths, set, ":", true, {' ', '\t', '\r', '\n'});
-    for(auto const & p : paths)
+    std::vector<std::string> p;
+    snapdev::tokenize_string(p, set, ":", true, {' ', '\t', '\r', '\n'});
+    for(auto const & path : p)
     {
-        push(p);
+        push(path);
     }
 }
 
@@ -287,7 +287,7 @@ void plugin_paths::add(std::string const & set)
  *
  * \param[in] path  The path to be removed.
  */
-void plugin_paths::erase(std::string const & path)
+void paths::erase(std::string const & path)
 {
     auto it(std::find(f_paths.begin(), f_paths.end(), path));
     if(it != f_paths.end())
