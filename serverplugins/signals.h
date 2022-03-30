@@ -22,7 +22,7 @@
  *
  * This header defines a macro one uses to add signals understood by a plugin.
  * The plugin also defines a set of macros one can use to connect to those
- * signals: PLUGIN_LISTEN and PLUGIN_LISTEN0.
+ * signals: SERVERPLUGINS_LISTEN and SERVERPLUGINS_LISTEN0.
  *
  * When a signal is called, the process is two or three steps:
  *

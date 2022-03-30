@@ -108,7 +108,7 @@ private:
  *
  * The listener must have a function named on_\<name of signal>.
  * The emitter is expected to define the signal using the
- * SNAP_SIGNAL() macro so the signal is called
+ * PLUGIN_SIGNAL() macro so the signal is called
  * signal_listen_\<name of signal>.
  *
  * \param[in] name  The name of the plugin connecting.
@@ -118,12 +118,12 @@ private:
  * \param[in] args  The list of arguments to that signal.
  */
 #define SERVERPLUGINS_LISTEN(name, emitter_name, emitter_class, signal, args...) \
-    if(f_collection->is_loaded(emitter_name)) \
+    if(plugins()->is_loaded(emitter_name)) \
         emitter_class::instance()->signal_listen_##signal( \
                     boost::bind(&name::on_##signal, this, ##args));
 
 #define SERVERPLUGINS_LISTEN0(name, emitter_name, emitter_class, signal) \
-    if(f_collection->is_loaded(emitter_name)) \
+    if(plugins()->is_loaded(emitter_name)) \
         emitter_class::instance()->signal_listen_##signal( \
                     boost::bind(&name::on_##signal, this));
 
