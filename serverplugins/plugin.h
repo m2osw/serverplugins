@@ -163,7 +163,7 @@ private:
  */
 #define _SERVERPLUGINS_UNIX_TIMESTAMP_YDAY(year, month, day) \
     ( \
-        /* January */    static_cast<qint64>(day) \
+        /* January */    static_cast<std::int64_t>(day) \
         /* February */ + ((month) >=  2 ? 31LL : 0LL) \
         /* March */    + ((month) >=  3 ? _SERVERPLUGINS_UNIX_TIMESTAMP_FDAY(year) : 0LL) \
         /* April */    + ((month) >=  4 ? 31LL : 0LL) \
@@ -216,14 +216,14 @@ private:
  * \param[in] second  The second representing this Unix timestamp.
  */
 #define SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second) \
-    ( /* time */ static_cast<qint64>(second) \
-                + static_cast<qint64>(minute) * 60LL \
-                + static_cast<qint64>(hour) * 3600LL \
+    ( /* time */ static_cast<std::int64_t>(second) \
+                + static_cast<std::int64_t>(minute) * 60LL \
+                + static_cast<std::int64_t>(hour) * 3600LL \
     + /* year day (month + day) */ (_SERVERPLUGINS_UNIX_TIMESTAMP_YDAY(year, month, day) - 1) * 86400LL \
-    + /* year */ (static_cast<qint64>(year) - 1970LL) * 31536000LL \
-                + ((static_cast<qint64>(year) - 1969LL) / 4LL) * 86400LL \
-                - ((static_cast<qint64>(year) - 1901LL) / 100LL) * 86400LL \
-                + ((static_cast<qint64>(year) - 1601LL) / 400LL) * 86400LL )
+    + /* year */ (static_cast<std::int64_t>(year) - 1970LL) * 31536000LL \
+                + ((static_cast<std::int64_t>(year) - 1969LL) / 4LL) * 86400LL \
+                - ((static_cast<std::int64_t>(year) - 1901LL) / 100LL) * 86400LL \
+                + ((static_cast<std::int64_t>(year) - 1601LL) / 400LL) * 86400LL )
 
 
 /** \brief Initialize the do_update() function.
