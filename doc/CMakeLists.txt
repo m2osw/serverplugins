@@ -20,6 +20,7 @@
 ##
 ## Documentation
 ##
+find_package(SnapDoxygen)
 AddDoxygenTarget(serverplugins
     ${SERVERPLUGINS_VERSION_MAJOR}
     ${SERVERPLUGINS_VERSION_MINOR}

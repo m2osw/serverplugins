@@ -50,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     ${LIBEXCEPT_LIBRARIES}
     ${CPPTHREAD_LIBRARIES}
     ${SNAPLOGGER_LIBRARIES}
+    dl
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
