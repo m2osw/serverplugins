@@ -30,6 +30,7 @@ if(SnapCatch2_FOUND)
         catch_main.cpp
 
         catch_plugins.cpp
+        catch_unix_timestamp.cpp
         catch_version.cpp
 
         plugin_daemon.cpp
