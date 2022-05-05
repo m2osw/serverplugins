@@ -43,7 +43,7 @@ constexpr char const * validate_name(char const (&str)[N])
     && (str[0] < 'a' || str[0] > 'z')
     && (str[0] < 'A' || str[0] > 'Z'))
     {
-        throw serverplugins_logic_error(
+        throw logic_error(
                     "first character of name \""
                   + std::string(str)
                   + "\" not valid.");
@@ -56,7 +56,7 @@ constexpr char const * validate_name(char const (&str)[N])
         && (str[i] < 'A' || str[i] > 'Z')
         && (str[i] < '0' || str[i] > '9'))
         {
-            throw serverplugins_logic_error(
+            throw logic_error(
                     "character #"
                   + std::to_string(i)
                   + " ("
@@ -77,7 +77,7 @@ constexpr time_t validate_date(time_t date)
     //
     if(date < 1624382757LL)
     {
-        throw serverplugins_out_of_range("plugin dates are expected to be at least 2021/06/22 10:30");
+        throw out_of_range("plugin dates are expected to be at least 2021/06/22 10:30");
     }
     return date;
 }
@@ -103,14 +103,14 @@ constexpr void validate_version(T const major, T const minor, T const patch)
 {
     if(major == 0 && minor == 0)
     {
-        throw serverplugins_logic_error("the plugin version cannot be 0.0.");
+        throw logic_error("the plugin version cannot be 0.0.");
     }
 
     if(is_negative(major)
     || is_negative(minor)
     || is_negative(patch))
     {
-        throw serverplugins_logic_error("the plugin version cannot use negative numbers.");
+        throw logic_error("the plugin version cannot use negative numbers.");
     }
 }
 

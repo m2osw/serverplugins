@@ -159,7 +159,7 @@ paths::path_t paths::canonicalize(path_t const & path)
 {
     if(path.empty())
     {
-        throw serverplugins_invalid_error("path cannot be an empty string.");
+        throw invalid_error("path cannot be an empty string.");
     }
 
     bool const is_root(path[0] == '/');
@@ -201,7 +201,7 @@ paths::path_t paths::canonicalize(path_t const & path)
             }
             else if(!f_allow_redirects)
             {
-                throw serverplugins_invalid_error(
+                throw invalid_error(
                       "the path \""
                     + path
                     + "\" going outside of the allowed range.");

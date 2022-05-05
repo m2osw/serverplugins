@@ -314,15 +314,28 @@ void plugin::bootstrap()
  *
  * If multiple updates happened then all of them get applied.
  *
+ * The \p phase parameter must be used to know which phase you are asked to
+ * process. This is used to allow for updates that have to happen in all the
+ * plugins before the next set of updates can happen. In most cases, only
+ * phase 0 is enough for all your plugins. Some systems may not even need
+ * plugin updates at all.
+ *
+ * The serverplugins project is not responsible for storing those dates so
+ * it does not offer any facilities to handle this event. You are responsible
+ * to implement the event calls including the \p last_updated and the
+ * \p phase parameters.
+ *
  * \note
  * The default implementation does nothing.
  *
  * \param[in] last_updated  The last time it was updated.
+ * \param[in] phase  The phase being updated.
  *
  * \return The date of the last update.
  */
-time_t plugin::do_update(time_t last_updated)
+time_t plugin::do_update(time_t last_updated, unsigned int phase)
 {
+    snapdev::NOT_USED(phase);
     return last_updated;
 }
 

@@ -142,7 +142,7 @@ void factory::register_plugin(char const * name, plugin::pointer_t p)
         // two plugins in a single file and that is a case we do not support
         // and would result in such an error
         //
-        throw serverplugins_name_mismatch(                                                   // LCOV_EXCL_LINE
+        throw name_mismatch(                                                                 // LCOV_EXCL_LINE
                 "registering plugin named \""                                                // LCOV_EXCL_LINE
                 + p->name()                                                                  // LCOV_EXCL_LINE
                 + "\" (from the plugin definition -- SERVERPLUGINS_START), but expected \""  // LCOV_EXCL_LINE
@@ -159,7 +159,7 @@ void factory::save_factory_in_plugin(plugin * p)
 #ifdef _DEBUG
     if(f_definition.f_name != "server")
     {
-        throw serverplugins_logic_error("the save_factory_in_plugin() function is only to be used by the server plugin--other plugins are loaded and this save happens automatically");
+        throw logic_error("the save_factory_in_plugin() function is only to be used by the server plugin--other plugins are loaded and this save happens automatically");
     }
 #endif
     p->f_factory = this;

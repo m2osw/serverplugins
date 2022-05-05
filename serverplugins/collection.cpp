@@ -21,6 +21,7 @@
 //
 #include    "serverplugins/collection.h"
 
+#include    "serverplugins/exception.h"
 #include    "serverplugins/repository.h"
 
 
@@ -157,11 +158,11 @@ void collection::set_data(void * data)
  * details about that parameter). In that function, you can start deep
  * initialization that involves other plugins, such as dependencies.
  *
- * The order in which the bootstrap() functions will be called is well
+ * The order in which the bootstrap() functions are called is well
  * defined via the list of ordered plugins. The order makes use of the
  * plugin dependency list (see plugin::dependencies() for details) and
  * the name of the plugin. If two plugins do not depend on each other,
- * then they get sorted alphabeticall (so A always comes before B unless
+ * then they get sorted alphabetically (so A always comes before B unless
  * A depends on B, then B would be initialized first).
  *
  * The order in which the plugins get initialized is very important if
@@ -185,6 +186,11 @@ bool collection::load_plugins(server::pointer_t s)
 {
     cppthread::guard lock(f_mutex);
 
+    if(detail::g_server_plugin_factory != nullptr)
+    {
+        throw server_already_exists("server already exists, you can create more than one (I need to fix this!?)");
+    }
+
     // this is a bit ugly but it allows use to define a root like plugin
     // which is the main process code; we call it a server because in
     // most cases it will be a server/daemon type of process which makes
@@ -200,7 +206,7 @@ bool collection::load_plugins(server::pointer_t s)
 #ifdef _DEBUG
     if(s->name() != "server")
     {
-        throw serverplugins_logic_error("the name in the server_factory definition must be \"server\".");
+        throw logic_error("the name in the server_factory definition must be \"server\".");
     }
 #endif
 

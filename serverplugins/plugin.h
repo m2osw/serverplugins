@@ -72,7 +72,7 @@ public:
     collection *                        plugins() const;
 
     virtual void                        bootstrap();
-    virtual time_t                      do_update(time_t last_updated);
+    virtual time_t                      do_update(time_t last_updated, unsigned int phase = 0);
 
 private:
     friend class detail::repository;

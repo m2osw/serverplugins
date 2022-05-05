@@ -76,7 +76,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         CATCH_REQUIRE_FALSE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize(serverplugins::paths::path_t())
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
 
@@ -84,7 +84,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         CATCH_REQUIRE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize(serverplugins::paths::path_t())
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
 
@@ -92,7 +92,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         CATCH_REQUIRE_FALSE(p.get_allow_redirects());
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize(serverplugins::paths::path_t())
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: path cannot be an empty string."));
     }
@@ -211,7 +211,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         p.set_allow_redirects(false);
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this/long/../../../..//")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the path \"this/long/../../../..//\" going outside of the allowed range."));
 
@@ -220,7 +220,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         p.set_allow_redirects(false);
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this//long/../../../../root/home/path/")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the path \"this//long/../../../../root/home/path/\" going outside of the allowed range."));
 
@@ -229,7 +229,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         p.set_allow_redirects(false);
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this/long/..//./../../root/home/path/")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the path \"this/long/..//./../../root/home/path/\" going outside of the allowed range."));
 
@@ -238,7 +238,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
         p.set_allow_redirects(false);
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this/long/../.././../root//home//path//")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the path \"this/long/../.././../root//home//path//\" going outside of the allowed range."));
     }
@@ -300,7 +300,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   p.canonicalize("this/long/../.././../root//home//path//")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the path \"this/long/../.././../root//home//path//\" going outside of the allowed range."));
     }
@@ -718,25 +718,25 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("invalid-name")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: invalid plugin name in \"invalid-name\"."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("non_existant")
-                , serverplugins::serverplugins_not_found
+                , serverplugins::not_found
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: plugin named \"non_existant\" not found in any of the specified paths."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("./libserver.so")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: the name \"server\" is reserved for the main running process."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("./libjuju1.23.so")
-                , serverplugins::serverplugins_invalid_error
+                , serverplugins::invalid_error
                 , Catch::Matchers::ExceptionMessage(
                           "serverplugins_exception: invalid plugin name in \"juju1.23\" (from path \"./libjuju1.23.so\")."));
     }

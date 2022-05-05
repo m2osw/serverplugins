@@ -35,15 +35,16 @@ namespace serverplugins
 
 
 
-DECLARE_LOGIC_ERROR(serverplugins_logic_error);
+DECLARE_LOGIC_ERROR(logic_error);
 
-DECLARE_OUT_OF_RANGE(serverplugins_out_of_range);
+DECLARE_OUT_OF_RANGE(out_of_range);
 
 DECLARE_MAIN_EXCEPTION(serverplugins_exception);
-DECLARE_EXCEPTION(serverplugins_exception, serverplugins_invalid_error);
-DECLARE_EXCEPTION(serverplugins_exception, serverplugins_invalid_order);
-DECLARE_EXCEPTION(serverplugins_exception, serverplugins_name_mismatch);
-DECLARE_EXCEPTION(serverplugins_exception, serverplugins_not_found);
+DECLARE_EXCEPTION(serverplugins_exception, invalid_error);
+DECLARE_EXCEPTION(serverplugins_exception, invalid_order);
+DECLARE_EXCEPTION(serverplugins_exception, name_mismatch);
+DECLARE_EXCEPTION(serverplugins_exception, not_found);
+DECLARE_EXCEPTION(serverplugins_exception, server_already_exists);
 
 
 

@@ -449,7 +449,7 @@ void names::push(name_t const & name)
         n = name.substr(pos, l - pos);
         if(!validate(n))
         {
-            throw serverplugins_invalid_error(
+            throw invalid_error(
                       "invalid plugin name in \""
                     + n
                     + "\" (from path \""
@@ -462,7 +462,7 @@ void names::push(name_t const & name)
     {
         if(!validate(name))
         {
-            throw serverplugins_invalid_error(
+            throw invalid_error(
                       "invalid plugin name in \""
                     + name
                     + "\".");
@@ -470,7 +470,7 @@ void names::push(name_t const & name)
         fn = to_filename(name);
         if(fn.empty())
         {
-            throw serverplugins_not_found(
+            throw not_found(
                       "plugin named \""
                     + name
                     + "\" not found in any of the specified paths.");
@@ -480,7 +480,7 @@ void names::push(name_t const & name)
 
     if(n == "server")
     {
-        throw serverplugins_invalid_error("the name \"server\" is reserved for the main running process.");
+        throw invalid_error("the name \"server\" is reserved for the main running process.");
     }
 
     f_names[n] = fn;

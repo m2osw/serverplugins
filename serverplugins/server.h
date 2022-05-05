@@ -34,7 +34,7 @@ class server
     : public plugin
 {
 public:
-    // Do not use the CPPTHREAD_PLUGIN_DEFAULTS() because at this point
+    // Do not use the SERVERPLUGINS_DEFAULTS() because at this point
     // we do not have access to the factory
     //
     typedef std::shared_ptr<server> pointer_t;
