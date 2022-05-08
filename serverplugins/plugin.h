@@ -231,7 +231,7 @@ private:
  * This macro is used to initialize the do_update() function by creating a
  * variable that is going to be given a date.
  */
-#define SERVERPLUGINS_PLUGIN_UPDATE_INIT() int64_t last_plugin_update(SERVERPLUGINS_UNIX_TIMESTAMP(1990, 1, 1, 0, 0, 0) * 1000000LL);
+#define SERVERPLUGINS_PLUGIN_UPDATE_INIT() time_t last_plugin_update(SERVERPLUGINS_UNIX_TIMESTAMP(1990, 1, 1, 0, 0, 0));
 
 
 /** \brief Create an update entry in your on_update() signal implementation.
@@ -256,10 +256,10 @@ private:
  * \param[in] function  The name of the function to call if the update is required.
  */
 #define SERVERPLUGINS_PLUGIN_UPDATE(year, month, day, hour, minute, second, function) \
-    if(last_plugin_update > SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second) * 1000000LL) { \
-        throw ::serverplugins::serverplugins_invalid_order("the updates in your do_update() functions must appear in increasing order in regard to date and time"); \
+    if(last_plugin_update > SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second)) { \
+        throw ::serverplugins::invalid_order("the updates in your do_update() functions must appear in increasing order in regard to date and time"); \
     } \
-    last_plugin_update = SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second) * 1000000LL; \
+    last_plugin_update = SERVERPLUGINS_UNIX_TIMESTAMP(year, month, day, hour, minute, second); \
     if(last_updated < last_plugin_update) { \
         function(last_plugin_update); \
     }
