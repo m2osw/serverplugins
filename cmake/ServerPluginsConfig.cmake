@@ -53,7 +53,7 @@ set(SERVERPLUGINS_LIBRARIES    ${SERVERPLUGINS_LIBRARY})
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(
-    CppThread
+    ServerPlugins
     REQUIRED_VARS
         SERVERPLUGINS_INCLUDE_DIR
         SERVERPLUGINS_LIBRARY
