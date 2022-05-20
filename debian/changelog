@@ -1,5 +1,11 @@
 serverplugins (2.0.0.0~bionic) bionic; urgency=high
 
   * First version of the seperated server-plugins library.
+  * The following are changes since the separation from cppthread.
+  * Cleaned up the cmake file.
+  * Fixed type of time variable. Use time_t (in seconds). Enough for updates.
+  * Added a "phase" for the do_update(). Used in snapserver.
+  * Simplified exception names (removed "serverplugins_").
+  * Replaced the qint64 in std::int64_t.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sat, 26 Mar 2022 14:07:48 -0700
