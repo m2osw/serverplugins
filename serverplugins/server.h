@@ -20,8 +20,8 @@
 
 // self
 //
-#include    "serverplugins/factory.h"
-#include    "serverplugins/plugin.h"
+#include    <serverplugins/factory.h>
+#include    <serverplugins/plugin.h>
 
 
 

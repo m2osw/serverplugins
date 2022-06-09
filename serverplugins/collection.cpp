@@ -27,8 +27,8 @@
 
 // cppthread
 //
-#include    "cppthread/guard.h"
-#include    "cppthread/log.h"
+#include    <cppthread/guard.h>
+#include    <cppthread/log.h>
 
 
 // C++

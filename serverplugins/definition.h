@@ -20,11 +20,11 @@
 
 // self
 //
-#include    "serverplugins/utils.h"
-#include    "serverplugins/version.h"       // used in SERVERPLUGINS_START()
+#include    <serverplugins/utils.h>
+#include    <serverplugins/version.h>       // used in SERVERPLUGINS_START()
 
 
-// snapdev lib
+// snapdev
 //
 #include    <snapdev/not_used.h>
 
@@ -32,6 +32,7 @@
 // C++ set
 //
 #include    <set>
+
 
 
 namespace serverplugins

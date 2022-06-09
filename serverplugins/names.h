@@ -20,7 +20,7 @@
 
 // self
 //
-#include    "serverplugins/paths.h"
+#include    <serverplugins/paths.h>
 
 
 // C++ set

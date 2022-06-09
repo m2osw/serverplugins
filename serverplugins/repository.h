@@ -19,12 +19,12 @@
 
 // self
 //
-#include    "serverplugins/plugin.h"
+#include    <serverplugins/plugin.h>
 
 
 // cppthread
 //
-#include    "cppthread/mutex.h"
+#include    <cppthread/mutex.h>
 
 
 

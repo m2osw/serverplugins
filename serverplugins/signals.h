@@ -15,8 +15,6 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-#include    <boost/signals2.hpp>
-
 /** \file
  * \brief Declarations necessary to setup signals in plugins.
  *
@@ -45,6 +43,8 @@
  * \endcode
  *
  */
+
+#include    <boost/signals2.hpp>
 
 
 
