@@ -532,9 +532,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                 out << "fake plugin 1\n";
             }
             filename = n.to_filename("fake");
-            CATCH_REQUIRE(filename.empty());
-            chmod(fake.c_str(), 0755);
-            filename = n.to_filename("fake");
             CATCH_REQUIRE(filename == fake);
             unlink(fake.c_str());
         }
@@ -545,9 +542,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                 std::ofstream out(fake);
                 out << "fake plugin 2\n";
             }
-            filename = n.to_filename("fake");
-            CATCH_REQUIRE(filename.empty());
-            chmod(fake.c_str(), 0755);
             filename = n.to_filename("fake");
             CATCH_REQUIRE(filename == fake);
             unlink(fake.c_str());
@@ -563,9 +557,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                     out << "fake plugin 3\n";
                 }
                 filename = n.to_filename("fake");
-                CATCH_REQUIRE(filename.empty());
-                chmod(fake.c_str(), 0755);
-                filename = n.to_filename("fake");
                 CATCH_REQUIRE(filename == fake);
                 unlink(fake.c_str());
             }
@@ -576,9 +567,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                     std::ofstream out(fake);
                     out << "fake plugin 4\n";
                 }
-                filename = n.to_filename("fake");
-                CATCH_REQUIRE(filename.empty());
-                chmod(fake.c_str(), 0755);
                 filename = n.to_filename("fake");
                 CATCH_REQUIRE(filename == fake);
                 unlink(fake.c_str());
@@ -614,9 +602,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                 out << "fake plugin 1\n";
             }
             filename = n.to_filename("fake");
-            CATCH_REQUIRE(filename.empty());
-            chmod(fake.c_str(), 0755);
-            filename = n.to_filename("fake");
             CATCH_REQUIRE(filename == "./" + fake);
             unlink(fake.c_str());
         }
@@ -627,9 +612,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                 std::ofstream out(fake);
                 out << "fake plugin 2\n";
             }
-            filename = n.to_filename("fake");
-            CATCH_REQUIRE(filename.empty());
-            chmod(fake.c_str(), 0755);
             filename = n.to_filename("fake");
             CATCH_REQUIRE(filename == "./" + fake);
             unlink(fake.c_str());
@@ -645,9 +627,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                     out << "fake plugin 3\n";
                 }
                 filename = n.to_filename("fake");
-                CATCH_REQUIRE(filename.empty());
-                chmod(fake.c_str(), 0755);
-                filename = n.to_filename("fake");
                 CATCH_REQUIRE(filename == "./" + fake);
                 unlink(fake.c_str());
             }
@@ -658,9 +637,6 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
                     std::ofstream out(fake);
                     out << "fake plugin 4\n";
                 }
-                filename = n.to_filename("fake");
-                CATCH_REQUIRE(filename.empty());
-                chmod(fake.c_str(), 0755);
                 filename = n.to_filename("fake");
                 CATCH_REQUIRE(filename == "./" + fake);
                 unlink(fake.c_str());

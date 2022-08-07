@@ -22,7 +22,6 @@
 //
 #include    <serverplugins/names.h>
 #include    <serverplugins/server.h>
-//#include    <serverplugins/version.h>       // used in CPPTHREAD_PLUGIN_START()
 
 
 // cppthread

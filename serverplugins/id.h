@@ -16,40 +16,31 @@
 // You should have received a copy of the GNU General Public License along
 // with this program; if not, write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#pragma once
 
-// self
+// C++
 //
-#include    <serverplugins/plugin.h>
-
-
-// cppthread
-//
-#include    <cppthread/mutex.h>
+#include    <map>
 
 
 
 namespace serverplugins
 {
-namespace detail
-{
-
-
-// WARNING: this is a detail (internal) class, do not use directly
-class repository
-{
-public:
-    static repository &         instance();
-    plugin::pointer_t           get_plugin(names::filename_t const & filename);
-    void                        register_plugin(plugin::pointer_t p);
-
-private:
-    cppthread::mutex            f_mutex = cppthread::mutex();
-    plugin::map_t               f_plugins = plugin::map_t();        // WARNING: this map is sorted by filename
-    names::filename_t           f_register_filename = names::filename_t();
-};
 
 
 
-} // namespace detail
+typedef std::uint8_t        id_t;
+
+constexpr id_t              NULL_ID = 0;
+
+id_t                        get_id(std::string const & name);
+id_t                        find_id(std::string const & name);
+std::string                 get_name(id_t id);
+
+constexpr size_t            MIN_ID = static_cast<id_t>(1);
+constexpr size_t            MAX_ID = std::numeric_limits<id_t>::max();
+
+
+
 } // namespace serverplugins
 // vim: ts=4 sw=4 et

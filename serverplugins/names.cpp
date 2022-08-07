@@ -331,7 +331,7 @@ names::filename_t names::to_filename(name_t const & name)
         filename_t filename(path);
         filename += name;
         filename += ".so";
-        if(access(filename.c_str(), R_OK | X_OK) == 0)
+        if(access(filename.c_str(), R_OK) == 0)
         {
             return filename;
         }
@@ -342,7 +342,7 @@ names::filename_t names::to_filename(name_t const & name)
         filename += "lib";
         filename += name;
         filename += ".so";
-        if(access(filename.c_str(), R_OK | X_OK) == 0)
+        if(access(filename.c_str(), R_OK) == 0)
         {
             return filename;
         }
@@ -354,7 +354,7 @@ names::filename_t names::to_filename(name_t const & name)
         filename += '/';
         filename += name;
         filename += ".so";
-        if(access(filename.c_str(), R_OK | X_OK) == 0)
+        if(access(filename.c_str(), R_OK) == 0)
         {
             return filename;
         }
@@ -366,7 +366,7 @@ names::filename_t names::to_filename(name_t const & name)
         filename += "/lib";
         filename += name;
         filename += ".so";
-        if(access(filename.c_str(), R_OK | X_OK) == 0)
+        if(access(filename.c_str(), R_OK) == 0)
         {
             return filename;
         }

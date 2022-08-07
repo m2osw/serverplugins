@@ -23,7 +23,7 @@
 #include    <serverplugins/paths.h>
 
 
-// C++ set
+// C++
 //
 #include    <map>
 

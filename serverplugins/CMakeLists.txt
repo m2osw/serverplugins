@@ -31,6 +31,7 @@ configure_file(
 add_library(${PROJECT_NAME} SHARED
     collection.cpp
     factory.cpp
+    id.cpp
     names.cpp
     paths.cpp
     plugin.cpp
@@ -82,6 +83,7 @@ install(
         collection.h
         definition.h
         factory.h
+        id.h
         names.h
         paths.h
         server.h

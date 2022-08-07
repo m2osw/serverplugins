@@ -80,6 +80,8 @@ namespace serverplugins
  *
  *     ...
  *
+ *     serverplugins::id_t id(get_id("my-server"));
+ *
  *     paths p;
  *     p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
  *
@@ -87,7 +89,7 @@ namespace serverplugins
  *     n.add("network, cloud-system");
  *     // or:  n.find_plugins();   to read all the plugins
  *
- *     collection c(n);
+ *     collection c(id, n);
  *     c.set_data(&my_app);
  *     c.load_plugins(d);   // your daemon is passed down to all plugins now
  * \endcode
@@ -186,9 +188,11 @@ bool collection::load_plugins(server::pointer_t s)
 {
     cppthread::guard lock(f_mutex);
 
-    if(detail::g_server_plugin_factory != nullptr)
+    id_t const id(s->get_server_id());
+    if(detail::g_server_plugin_factory[id] != nullptr)
     {
-        throw server_already_exists("server already exists, you can create more than one (I need to fix this!?)");
+        throw server_already_exists("plugins for \"" + get_name(id) + "\" were already loaded;"
+                " you cannot call load_plugins() more than once for the same server.");
     }
 
     // this is a bit ugly but it allows use to define a root like plugin
@@ -200,7 +204,7 @@ bool collection::load_plugins(server::pointer_t s)
     // and (2) register the server as f_server and f_plugins_by_name["server"]
     //
     f_server = s;
-    detail::g_server_plugin_factory = new detail::server_plugin_factory(s);
+    detail::g_server_plugin_factory[id] = new detail::server_plugin_factory(s);
     f_plugins_by_name["server"] = s;
 
 #ifdef _DEBUG
@@ -230,7 +234,7 @@ bool collection::load_plugins(server::pointer_t s)
             //
             if(name_filename.first == "server")
             {
-                cppthread::log << cppthread::log_level_t::error  // LCOV_EXCL_LINE
+                cppthread::log << cppthread::log_level_t::error         // LCOV_EXCL_LINE
                     << "a plugin cannot be called \"server\"."          // LCOV_EXCL_LINE
                     << cppthread::end;                                  // LCOV_EXCL_LINE
                 good = false;                                           // LCOV_EXCL_LINE
@@ -289,7 +293,8 @@ bool collection::load_plugins(server::pointer_t s)
             string_set_t const dependencies(p->dependencies());
             for(auto & d : dependencies)
             {
-                if(n.find(d) == n.end())
+                if(n.find(d) == n.end()
+                && d != "server")       // server dependency is implied
                 {
                     f_names.push(d);
                     changed = true;

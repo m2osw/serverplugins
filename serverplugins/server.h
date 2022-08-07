@@ -21,6 +21,7 @@
 // self
 //
 #include    <serverplugins/factory.h>
+#include    <serverplugins/id.h>
 #include    <serverplugins/plugin.h>
 
 
@@ -39,11 +40,16 @@ public:
     //
     typedef std::shared_ptr<server> pointer_t;
 
-                            server();
+                            server(id_t id);
                             server(server const &) = delete;
     virtual                 ~server();
     server &                operator = (server const &) = delete;
-    static pointer_t        instance();
+
+    static pointer_t        instance(id_t id);
+    id_t                    get_server_id() const;
+
+private:
+    id_t                    f_id = NULL_ID;
 };
 
 
@@ -60,7 +66,7 @@ public:
     server_plugin_factory & operator = (server_plugin_factory const &) = delete;
 };
 
-extern server_plugin_factory * g_server_plugin_factory;
+extern server_plugin_factory * g_server_plugin_factory[MAX_ID];
 
 } // namespace detail
 

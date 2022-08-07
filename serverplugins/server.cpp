@@ -54,7 +54,7 @@ server_plugin_factory::server_plugin_factory(server::pointer_t s)
 }
 
 
-server_plugin_factory * g_server_plugin_factory = nullptr;
+server_plugin_factory * g_server_plugin_factory[MAX_ID] = {};
 
 
 
@@ -62,17 +62,36 @@ server_plugin_factory * g_server_plugin_factory = nullptr;
 } // namespace detail
 
 
-server::server()
+server::server(id_t id)
+    : f_id(id)
 {
+    if(f_id == NULL_ID)
+    {
+        throw out_of_range("NULL_ID is not a valid identifier for server::server().");
+    }
 }
 
 server::~server()
 {
 }
 
-server::pointer_t server::instance()
+server::pointer_t server::instance(id_t id)
 {
-    return std::static_pointer_cast<server>(detail::g_server_plugin_factory->instance());
+    if(id == NULL_ID)
+    {
+        throw out_of_range("NULL_ID is not a valid identifier for server::instance().");
+    }
+    if(detail::g_server_plugin_factory[id] == nullptr)
+    {
+        throw not_found("server with identifier " + std::to_string(static_cast<unsigned int>(id)) + " is not defined. Did you call collection::load_plugins() yet?");
+    }
+    return std::static_pointer_cast<server>(detail::g_server_plugin_factory[id]->instance());
+}
+
+
+id_t server::get_server_id() const
+{
+    return f_id;
 }
 
 

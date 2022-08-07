@@ -33,6 +33,7 @@ namespace optional_namespace
 {
 
 daemon::daemon(int argc, char * argv[])
+    : server(serverplugins::get_id("daemon"))
 {
     // this is where we would parse argc/argv
     CATCH_REQUIRE(argc == 1);
