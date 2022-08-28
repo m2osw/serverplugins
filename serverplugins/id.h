@@ -20,6 +20,7 @@
 
 // C++
 //
+#include    <cstdint>
 #include    <limits>
 #include    <map>
 
