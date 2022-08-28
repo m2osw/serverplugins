@@ -20,9 +20,11 @@
 
 // C++
 //
-#include    <cstdint>
+//#include    <cstddef>
+//#include    <cstdint>
 #include    <limits>
 #include    <map>
+#include    <string>
 
 
 
@@ -39,8 +41,8 @@ id_t                        get_id(std::string const & name);
 id_t                        find_id(std::string const & name);
 std::string                 get_name(id_t id);
 
-constexpr size_t            MIN_ID = static_cast<id_t>(1);
-constexpr size_t            MAX_ID = std::numeric_limits<id_t>::max();
+constexpr std::size_t       MIN_ID = static_cast<id_t>(1);
+constexpr std::size_t       MAX_ID = std::numeric_limits<id_t>::max();
 
 
 
