@@ -20,8 +20,6 @@
 
 // C++
 //
-//#include    <cstddef>
-//#include    <cstdint>
 #include    <limits>
 #include    <map>
 #include    <string>
