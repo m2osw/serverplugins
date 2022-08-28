@@ -20,6 +20,7 @@
 
 // C++
 //
+#include    <limits>
 #include    <map>
 
 
