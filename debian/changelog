@@ -1,6 +1,8 @@
 serverplugins (2.0.3.0~bionic) bionic; urgency=high
 
-  * 
+  * Added support for up to 255 servers with plugins.
+  * Special handling of the "server" name.
+  * Don't test the execution flag (X_OK) on .so files.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 30 Oct 2022 21:44:52 -0700
 
