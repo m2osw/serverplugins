@@ -349,11 +349,16 @@ constexpr definition define_plugin(ARGS ...args)
 }
 
 
+#define SERVERPLUGINS_VERSION(name, major, minor) \
+    constexpr ::serverplugins::version_t::number_t g_##name##_version_major = major; \
+    constexpr ::serverplugins::version_t::number_t g_##name##_version_minor = minor;
+
+
 // helper macros to define a definition structure
 //
-#define SERVERPLUGINS_START(name, major, minor) \
+#define SERVERPLUGINS_START(name) \
     ::serverplugins::definition const g_##name##_definition = ::serverplugins::define_plugin( \
-          ::serverplugins::plugin_version(::serverplugins::version_t(major, minor, 0)) \
+          ::serverplugins::plugin_version(::serverplugins::version_t(g_##name##_version_major, g_##name##_version_minor, 0)) \
         , ::serverplugins::library_version(::serverplugins::version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH)) \
         , ::serverplugins::last_modification(UTC_BUILD_TIME_STAMP) \
         , ::serverplugins::plugin_name(#name)

@@ -35,6 +35,7 @@ namespace serverplugins
 {
 
 
+
 int             get_major_version();
 int             get_release_version();
 int             get_patch_version();

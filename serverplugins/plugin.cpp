@@ -68,10 +68,10 @@ plugin::plugin()
  * This constructor saves the plugin factory pointer. This is used by the
  * various functions returning plugin definition parameters.
  *
- * \param[in] factory  The factory that created this plugin.
+ * \param[in] f  The factory that created this plugin.
  */
-plugin::plugin(factory const & factory)
-    : f_factory(&factory)
+plugin::plugin(factory const & f)
+    : f_factory(&f)
 {
 }
 

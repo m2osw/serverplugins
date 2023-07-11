@@ -52,7 +52,7 @@ public:
                                         map_t;          // sorted by name
 
                                         plugin();       // for the server
-                                        plugin(factory const & factory);
+                                        plugin(factory const & f);
                                         plugin(plugin const &) = delete;
     virtual                             ~plugin();
     plugin &                            operator = (plugin const &) = delete;

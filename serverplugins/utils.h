@@ -118,6 +118,8 @@ constexpr void validate_version(T const major, T const minor, T const patch)
 
 struct version_t
 {
+    typedef std::int32_t        number_t;
+
                         constexpr version_t()
                             : f_major(0)
                             , f_minor(0)
@@ -136,9 +138,9 @@ struct version_t
                             validate_version(major, minor, patch);
                         }
 
-    std::int32_t        f_major = 0;
-    std::int32_t        f_minor = 0;
-    std::int32_t        f_patch = 0;
+    number_t            f_major = 0;
+    number_t            f_minor = 0;
+    number_t            f_patch = 0;
 };
 
 

@@ -45,7 +45,12 @@ namespace optional_namespace
 
 
 
-SERVERPLUGINS_START(testme, 5, 3)
+// for your plugins, define the version in your header file
+//
+SERVERPLUGINS_VERSION(testme, 5, 3)
+
+
+SERVERPLUGINS_START(testme)
     , ::serverplugins::description("a test plugin to make sure it all works.")
     , ::serverplugins::help_uri("https://snapwebsites.org/")
     , ::serverplugins::icon("cute.ico")
