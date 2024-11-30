@@ -19,14 +19,14 @@
 
 #pragma GCC diagnostic ignored "-Wformat"
 
-// self
-//
-#include    "catch_main.h"
-
-
 // load the macros
 //
 #include    <serverplugins/plugin.h>
+
+
+// self
+//
+#include    "catch_main.h"
 
 
 // snapdev
@@ -41,8 +41,6 @@
 
 // C
 //
-//#include    <stdio.h>
-//#include    <stdlib.h>
 #include    <time.h>
 
 

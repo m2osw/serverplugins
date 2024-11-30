@@ -17,18 +17,19 @@
 // with this program; if not, write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+// serverplugins
+//
+#include    <serverplugins/plugin.h>
+
+#include    <serverplugins/collection.h>
+
+
 // self
 //
 #include    "catch_main.h"
 
 #include    "plugin_daemon.h"
 #include    "plugin_testme.h"
-
-
-// serverplugins
-//
-#include    <serverplugins/plugin.h>
-#include    <serverplugins/collection.h>
 
 
 // snapdev
@@ -56,7 +57,7 @@
 
 CATCH_TEST_CASE("paths", "[plugins] [paths]")
 {
-    CATCH_START_SECTION("empty size/at when empty")
+    CATCH_START_SECTION("paths: empty size/at when empty")
     {
         serverplugins::paths p;
 
@@ -69,7 +70,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize empty path")
+    CATCH_START_SECTION("paths: canonicalize empty path")
     {
         serverplugins::paths p;
 
@@ -98,7 +99,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize base root path")
+    CATCH_START_SECTION("paths: canonicalize base root path")
     {
         for(int idx(1); idx <= 10; ++idx)
         {
@@ -114,7 +115,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize root path with one \"..\"")
+    CATCH_START_SECTION("paths: canonicalize root path with one \"..\"")
     {
         std::vector<serverplugins::paths::path_t> paths =
         {
@@ -166,7 +167,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize root path with too many \"..\"")
+    CATCH_START_SECTION("paths: canonicalize root path with too many \"..\"")
     {
         serverplugins::paths p;
 
@@ -190,7 +191,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize relative path with \".\" and \"..\"")
+    CATCH_START_SECTION("paths: canonicalize relative path with \".\" and \"..\"")
     {
         serverplugins::paths p;
 
@@ -202,7 +203,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("canonicalize relative path with too many \"..\"")
+    CATCH_START_SECTION("paths: canonicalize relative path with too many \"..\"")
     {
         serverplugins::paths p;
 
@@ -244,7 +245,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("push the same paths")
+    CATCH_START_SECTION("paths: push the same paths")
     {
         serverplugins::paths p;
 
@@ -294,7 +295,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("push invalid path")
+    CATCH_START_SECTION("paths: push invalid path")
     {
         serverplugins::paths p;
 
@@ -306,7 +307,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add paths")
+    CATCH_START_SECTION("paths: add paths")
     {
         serverplugins::paths p;
 
@@ -328,7 +329,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
 
 CATCH_TEST_CASE("names", "[plugins] [names]")
 {
-    CATCH_START_SECTION("empty by default")
+    CATCH_START_SECTION("names: empty by default")
     {
         serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -339,7 +340,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("validate names")
+    CATCH_START_SECTION("names: validate 'names'")
     {
         serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -399,7 +400,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("validate non-script names")
+    CATCH_START_SECTION("names: validate non-script names")
     {
         serverplugins::paths p;
         p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -504,7 +505,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add one unknown and one known name")
+    CATCH_START_SECTION("names: add one unknown and one known name")
     {
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -576,7 +577,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("test filename without any paths")
+    CATCH_START_SECTION("names: test filename without any paths")
     {
         serverplugins::paths p;
         serverplugins::names n(p);
@@ -646,7 +647,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add a new names by hand (push)")
+    CATCH_START_SECTION("names: add a new 'names' by hand (push)")
     {
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -660,7 +661,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add a new names by hand (add)")
+    CATCH_START_SECTION("names: add a new 'names' by hand (add)")
     {
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -675,7 +676,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add a names through the find_plugins() function")
+    CATCH_START_SECTION("names: add a 'names' through the find_plugins() function")
     {
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -686,7 +687,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("add invalid names")
+    CATCH_START_SECTION("names: add invalid 'names'")
     {
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
@@ -722,7 +723,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
 
 CATCH_TEST_CASE("collection", "[plugins] [collection]")
 {
-    CATCH_START_SECTION("load the plugin")
+    CATCH_START_SECTION("collection: load the plugin")
     {
         char const * argv[] = { "/usr/sbin/daemon", nullptr };
         optional_namespace::daemon::pointer_t d(std::make_shared<optional_namespace::daemon>(1, const_cast<char **>(argv)));

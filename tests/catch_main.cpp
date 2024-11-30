@@ -25,17 +25,17 @@
 #include    "catch_main.h"
 
 
-// serverplugins lib
+// serverplugins
 //
 #include    "serverplugins/version.h"
 
 
-// libexcept lib
+// libexcept
 //
 #include    "libexcept/exception.h"
 
 
-// C++ lib
+// C++
 //
 #include    <sstream>
 

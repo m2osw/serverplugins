@@ -16,14 +16,13 @@
 // You should have received a copy of the GNU General Public License along
 // with this program; if not, write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#ifndef UNIT_TEST_MAIN_H
-#define UNIT_TEST_MAIN_H
+#pragma once
 
-// catch2 lib
+// catch2
 //
 #include    <catch2/snapcatch2.hpp>
 
-// C++ lib
+// C++
 //
 #include    <string>
 #include    <cstring>
@@ -42,6 +41,5 @@ namespace SNAP_CATCH2_NAMESPACE
 
 
 }
-// unittest namespace
-#endif
+// namespace SNAP_CATCH2_NAMESPACE
 // vim: ts=4 sw=4 et
