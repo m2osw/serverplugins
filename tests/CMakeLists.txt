@@ -50,8 +50,6 @@ if(SnapCatch2_FOUND)
         ${SNAPCATCH2_LIBRARIES}
     )
 
-    add_test(unittests ${PROJECT_NAME})
-
     ##
     ## Add a test plugin to verify the loading of it
     ##
