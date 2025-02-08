@@ -70,7 +70,7 @@ class definition_value
 public:
     typedef T   value_t;
 
-    constexpr definition_value<T>(T const v)
+    constexpr definition_value(T const v)
         : f_value(v)
     {
     }
