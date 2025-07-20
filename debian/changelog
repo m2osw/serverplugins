@@ -1,3 +1,9 @@
+serverplugins (2.0.6.0~jammy) jammy; urgency=high
+
+  * Enhanced our tests.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Jul 2025 16:27:42 -0700
+
 serverplugins (2.0.5.0~jammy) jammy; urgency=high
 
   * Added some #include <cstdint>
