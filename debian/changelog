@@ -1,4 +1,4 @@
-serverplugins (2.0.6.0~jammy) jammy; urgency=high
+serverplugins (2.0.6.0~noble) noble; urgency=high
 
   * Enhanced our tests.
 
