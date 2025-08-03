@@ -62,6 +62,8 @@ namespace serverplugins
 /** \brief Get the number of paths defined in this set of paths.
  *
  * This function returns the number of paths this set has.
+ *
+ * \return The number of paths.
  */
 std::size_t paths::size() const
 {
@@ -265,9 +267,9 @@ void paths::push(path_t const & path)
  * return) at the start and end of each path. Such characters should not
  * be supported at those locations by any sensible file systems anyway.
  *
- * \param[in] path  The path to be added.
+ * \param[in] set  The set of colon or spaces separated paths to be added.
  *
- * \sa add()
+ * \sa erase()
  */
 void paths::add(std::string const & set)
 {

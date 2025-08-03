@@ -120,7 +120,7 @@ namespace serverplugins
  * specify A as the plugin you want to load. The load_plugins() function
  * will automatically know that it has to then load B.
  *
- * \param[in] names  A list of plugins to be loaded.
+ * \param[in] n  A list of plugins to be loaded.
  *
  * \sa set_data();
  * \sa load_plugins();

@@ -107,6 +107,8 @@ version_t plugin::version() const
  *
  * This function returns a timestamp representing the last time the plugin
  * was built.
+ *
+ * \return the last modification date of the plugin.
  */
 time_t plugin::last_modification() const
 {
@@ -220,7 +222,7 @@ string_set_t plugin::dependencies() const
 }
 
 
-/** \bfief List of conflicts.
+/** \brief List of conflicts.
  *
  * This function returns a set of strings with names of plugins that are in
  * conflict with this plugin. For example, you may create two plugins so
