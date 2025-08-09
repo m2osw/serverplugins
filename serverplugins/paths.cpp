@@ -27,6 +27,7 @@
 // snapdev
 //
 #include    <snapdev/join_strings.h>
+#include    <snapdev/pathinfo.h>
 #include    <snapdev/tokenize_string.h>
 
 
@@ -164,44 +165,22 @@ paths::path_t paths::canonicalize(path_t const & path)
         throw invalid_error("path cannot be an empty string.");
     }
 
-    bool const is_root(path[0] == '/');
+    std::string const p(snapdev::pathinfo::canonicalize(path, std::string()));
 
-    // canonicalize the path (exactly one "/" between each segment)
+    // by default we do not allow relative paths that start with "../"
     //
-    std::vector<std::string> segments;
-    snapdev::tokenize_string(segments, path, "/", true);
-
-    if(segments.empty())
+    // TODO:
+    // but if you use a full path, it will pass just fine... i.e. we need to
+    // test whether it is under a certain folder instead
+    //
+    if(!f_allow_redirects)
     {
-        return is_root
-                ? std::string("/")
-                : std::string(".");
-    }
-
-    for(std::size_t idx(0); idx < segments.size(); ++idx)
-    {
-        if(segments[idx] == ".")
+        if(p.length() >= 2
+        && p[0] == '.'
+        && p[1] == '.')
         {
-            segments.erase(segments.begin() + idx);
-            --idx;
-        }
-        else if(segments[idx] == "..")
-        {
-            if(idx > 0
-            && segments[idx - 1] != "..")
-            {
-                segments.erase(segments.begin() + idx);
-                --idx;
-                segments.erase(segments.begin() + idx);
-                --idx;
-            }
-            else if(idx == 0
-                 && is_root)
-            {
-                segments.erase(segments.begin());
-                --idx;
-            }
-            else if(!f_allow_redirects)
+            if(p.length() < 3
+            || p[2] == '/')
             {
                 throw invalid_error(
                       "the path \""
@@ -211,16 +190,7 @@ paths::path_t paths::canonicalize(path_t const & path)
         }
     }
 
-    if(segments.empty())
-    {
-        return is_root
-                    ? std::string("/")
-                    : std::string(".");
-    }
-
-    return is_root
-            ? '/' + snapdev::join_strings(segments, "/")
-            : snapdev::join_strings(segments, "/");
+    return p;
 }
 
 

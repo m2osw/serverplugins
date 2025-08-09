@@ -55,7 +55,7 @@
 
 
 
-CATCH_TEST_CASE("paths", "[plugins] [paths]")
+CATCH_TEST_CASE("paths", "[plugins][paths]")
 {
     CATCH_START_SECTION("paths: empty size/at when empty")
     {
@@ -327,7 +327,7 @@ CATCH_TEST_CASE("paths", "[plugins] [paths]")
 
 
 
-CATCH_TEST_CASE("names", "[plugins] [names]")
+CATCH_TEST_CASE("names", "[plugins][names]")
 {
     CATCH_START_SECTION("names: empty by default")
     {
@@ -721,7 +721,7 @@ CATCH_TEST_CASE("names", "[plugins] [names]")
 }
 
 
-CATCH_TEST_CASE("collection", "[plugins] [collection]")
+CATCH_TEST_CASE("collection", "[plugins][collection]")
 {
     CATCH_START_SECTION("collection: load the plugin")
     {
