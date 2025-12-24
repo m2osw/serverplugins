@@ -71,9 +71,11 @@ server::server(id_t id)
     }
 }
 
+
 server::~server()
 {
 }
+
 
 server::pointer_t server::instance(id_t id)
 {

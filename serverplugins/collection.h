@@ -85,7 +85,7 @@ public:
     }
 
     // TBD: I think I prefer to use the get_server() rather than the data pointer
-    //      but in the Snap! C++ plugins we have a server and a a snap_child...
+    //      but in the Snap! C++ plugins we have a server and a snap_child...
     //
     template<typename T>
     T *                                 get_data() const { return static_cast<T *>(f_data); }

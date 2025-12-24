@@ -195,9 +195,9 @@ bool collection::load_plugins(server::pointer_t s)
                 " you cannot call load_plugins() more than once for the same server.");
     }
 
-    // this is a bit ugly but it allows use to define a root like plugin
+    // this is a bit ugly but it allows us to define a root like plugin
     // which is the main process code; we call it a server because in
-    // most cases it will be a server/daemon type of process which makes
+    // most cases it is a server/daemon type of process which makes
     // use of plugins (at least in our environment)
     //
     // so in the following we (1) create a server factory manually
@@ -249,7 +249,7 @@ bool collection::load_plugins(server::pointer_t s)
                     << name_filename.second
                     << "\" for plugin \""
                     << name_filename.first
-                    << "\", but the plugin was not found (name mismatch? plugin not defined?)."
+                    << "\", but the plugin was not found (name mismatch? plugin not installed?)."
                     << cppthread::end;
                 good = false;
                 continue;

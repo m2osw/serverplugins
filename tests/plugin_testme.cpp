@@ -32,16 +32,17 @@
 
 
 
-
-/** \brief In your plugins, a namespace is encourage but optional.
+/** \brief In your plugins, a namespace is encouraged but optional.
  *
- * You can choose to have a namespace or not. We think it is cleaner to
- * have such a namespace, but it is not mandatory at all.
+ * In general, we use the same namespace as the server uses unless it is
+ * a separate plugin, then we use a namespace based on that other project.
+ *
+ * We also use sub-namespaces. The the name of the project and then a
+ * sub-namespace with the name of the plugin. That way, multiple plugins
+ * will not easily clash between each other.
  */
 namespace optional_namespace
 {
-
-
 
 
 
@@ -72,6 +73,7 @@ void testme::bootstrap()
     // somehow, the test environment thinks we're not inside the
     // CATCH_TEST_CASE() when any functions here gets called
     //
+    //CATCH_REQUIRE(d != nullptr);
     //CATCH_CHECK(d->f_value == 0xA987);
 
     if(d == nullptr)
@@ -90,6 +92,7 @@ std::string testme::it_worked()
 {
     return std::string("testme:plugin: it worked, it was called!");
 }
+
 
 
 } // optional_namespace namespace

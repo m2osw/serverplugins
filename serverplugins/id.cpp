@@ -136,7 +136,7 @@ id_t get_id(std::string const & name)
 
     if(g_next_identifier == MAX_ID) // MAX_ID is inclusive
     {
-        throw out_of_range("serverplugins: too many identifier created.");
+        throw out_of_range("serverplugins: too many identifiers created.");
     }
 
     ++g_next_identifier;

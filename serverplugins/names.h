@@ -55,7 +55,7 @@ public:
 
 private:
     paths const                         f_paths;
-    bool const                          f_prevent_script_names = false;
+    bool const                          f_prevent_script_keywords = false;
     names_t                             f_names = names_t();
 };
 

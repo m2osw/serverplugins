@@ -97,35 +97,66 @@ private:
 
 
 
-/** \brief Conditionally listen to a signal.
+/** \brief Listen to a signal.
  *
- * This function checks whether a given plugin was loaded and if so
- * listen to one of its signals.
+ * The server and any plugin in your environment can emit a signal. This
+ * means calling a function defined in any one of your plugins or the
+ * server itself. Although in most cases servers do not listen to any
+ * signal, it is possible. Similarly, the server is most often the one
+ * emitting signals, but one of the plugins can also do so and other
+ * plugins can listen to those signals too.
  *
- * The macro accepts the name of the listener plugin (it must be
- * 'this'), the name of the emitter plugin, and the name of the
- * signal to listen to.
+ * This function first searches for the plugin named \em emitter_class.
+ * Note that the name can refer to the server which also gets added to
+ * the collection as a plugin. If the named plugin is found, meaning that
+ * it was loaded or the server was referenced, this function starts to
+ * listen to the specified \p signal.
  *
- * The listener must have a function named on_\<name of signal>.
- * The emitter is expected to define the signal using the
- * PLUGIN_SIGNAL() macro so the signal is called
+ * The macro accepts:
+ *
+ * \li the \p name of the listener plugin (in other words, the name of
+ *     the class using this macro);
+ * \li the \p emitter_class name, which represents the name of the plugin
+ *     emitting the signal; so say you have a signal named `new_connection()`
+ *     the emitting class would use: `new_connection(connection)` to
+ *     emit the signal; here you enter the name of the class that calls that
+ *     `new_connection()` function;
+ * \li the \p signal name, which is the name of the function as shown above;
+ *     it is also defined in the `PLUGIN_SIGNAL()`  or
+ *     `PLUGIN_SIGNAL_WITH_MODE()` macro; that's how the signal is created
+ *     in the \p emitter_class;
+ * \li the \p args are arguments that the emitter pass to the listener; there
+ *     must be at least one to use the `SERVERPLUGINS_LISTEN()` macro; if the
+ *     signal does not use any parameter, use the `SERVERPLUGINS_LISTEN0()`
+ *     instead; in most cases, these are `boost::placeholders::_1` and 2, 3,
+ *     etc. although it can be a hard coded value as well.
+ *
+ * The listener must have a function `void on_\<name of signal>(args...)`.
+ *
+ * The emitter is expected to define the signal using the `PLUGIN_SIGNAL()`
+ * or `PLUGIN_SIGNAL_WITH_MODE()` macro so the signal is called
  * signal_listen_\<name of signal>.
  *
+ * Note that we often use the `PLUGIN_SIGNAL_WITH_MODE()` with the mode
+ * `NEITHER` to avoid the start function which the default `PLUGIN_SIGNAL()`
+ * automatically generates.
+ *
  * \param[in] name  The name of the plugin connecting.
- * \param[in] emitter_name  The name of the plugin emitting this signal.
  * \param[in] emitter_class  The class with qualifiers if necessary of the plugin emitting this signal.
  * \param[in] signal  The name of the signal to listen to.
  * \param[in] args  The list of arguments to that signal.
  */
-#define SERVERPLUGINS_LISTEN(name, emitter_name, emitter_class, signal, args...) \
-    if(plugins()->is_loaded(emitter_name)) \
-        emitter_class::instance()->signal_listen_##signal( \
-                    boost::bind(&name::on_##signal, this, ##args));
+#define SERVERPLUGINS_LISTEN(name, emitter_class, signal, args...) \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin_by_name<emitter_class>(#emitter_class)); \
+        if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
+                        boost::bind(&name::on_##signal, this, ##args)); } while(false)
 
-#define SERVERPLUGINS_LISTEN0(name, emitter_name, emitter_class, signal) \
-    if(plugins()->is_loaded(emitter_name)) \
-        emitter_class::instance()->signal_listen_##signal( \
-                    boost::bind(&name::on_##signal, this));
+#define SERVERPLUGINS_LISTEN0(name, emitter_class, signal) \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin_by_name<emitter_class>(#emitter_class)); \
+        if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
+                        boost::bind(&name::on_##signal, this)); } while (false)
+
+
 
 
 /** \brief Compute the number of days in the month of February.

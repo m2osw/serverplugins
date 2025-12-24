@@ -72,18 +72,18 @@ namespace serverplugins
  * list of paths of the names object. We actually make a deep copy of
  * the paths so we can be sure you can't add more paths later.
  *
- * The \p script_names parameter is used to determine whether the name
+ * The \p script_keywords parameter is used to determine whether the name
  * validation should prevent a plugin from using a reserved keyword (as
  * per ECMAScript). This is useful if you plan to have plugins used in
  * scripts and in there the plugins can be referenced by name.
  *
  * \param[in] paths  The list of paths to use to search the plugins.
- * \param[in] prevent_script_names  true if the plugin names are going to
+ * \param[in] prevent_script_keywords  true if the plugin names are going to
  * be used in scripts.
  */
-names::names(paths const & paths, bool prevent_script_names)
+names::names(paths const & paths, bool prevent_script_keywords)
     : f_paths(paths)
-    , f_prevent_script_names(prevent_script_names)
+    , f_prevent_script_keywords(prevent_script_keywords)
 {
 }
 
@@ -140,7 +140,7 @@ bool names::validate(name_t const & name)
     // the name is considered to be a valid word, make sure it isn't an
     // ECMAScript reserved keyword if the user asked to prevent script names
     //
-    if(f_prevent_script_names
+    if(f_prevent_script_keywords
     && is_emcascript_reserved(name))
     {
         return false;
@@ -567,7 +567,7 @@ names::names_t names::map() const
  *
  * Note that the technical decoration is implemented internally. In other
  * words, the "lib" prefix and ".so" suffix are already handled by this
- * function. You do not need to use these at all.
+ * function. You do not need to specify these at all.
  *
  * \warning
  * You must call the add_path() function with all the paths that you want
@@ -580,7 +580,7 @@ void names::find_plugins(name_t const & prefix, name_t const & suffix)
 {
     snapdev::glob_to_list<std::vector<std::string>> glob;
 
-    std::size_t max(f_paths.size());
+    std::size_t const max(f_paths.size());
     for(std::size_t idx(0); idx < max; ++idx)
     {
         glob.read_path<

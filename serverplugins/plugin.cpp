@@ -255,7 +255,7 @@ string_set_t plugin::suggestions() const
 /** \brief Path to this specific plugin settings.
  *
  * This function returns a path to the plugin settings. The settings may
- * be in a database or on disk. The path will depend on how the plugins
+ * be in a database or on disk. The path depends on how the plugins
  * are used.
  *
  * \return The path to this plugin settings.
