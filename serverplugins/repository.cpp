@@ -129,13 +129,15 @@ plugin::pointer_t repository::get_plugin(names::filename_t const & filename)
     // TBD: Use RTLD_NOW instead of RTLD_LAZY in DEBUG mode
     //      so we discover missing symbols would be nice, only
     //      that would require loading in the correct order...
-    //      (see dlopen() call below)
+    //      (see dlopen() call below) and we also do not want to
+    //      prevent loops (plugin A depends on B and B also uses A
+    //      features...)
     //
 
     // load the plugin; the plugin will "register itself" through its factory
     //
-    // we want to plugin filename save in the plugin object itself at the time
-    // we register it so we save it here and pick it up at the time the
+    // we want to plugin filename saved in the plugin object itself at the
+    // time we register it so we save it here and pick it up at the time the
     // registration function gets called
     //
     f_register_filename = filename;
@@ -169,7 +171,7 @@ plugin::pointer_t repository::get_plugin(names::filename_t const & filename)
 /** \brief Register the plugin in our global repository.
  *
  * Since plugins can be loaded once with dlopen() and then reused any number
- * of times, we register the plugins in a global repositiory. This function
+ * of times, we register the plugins in a global repository. This function
  * is the one used to actually register the plugin.
  *
  * When loading a new plugin you should call the

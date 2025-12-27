@@ -40,19 +40,21 @@ class plugin;
 class factory
 {
 public:
-                                    factory(definition const & definition, std::shared_ptr<plugin> instance);
+                                    factory(definition const & definition, std::shared_ptr<plugin> p);
                                     ~factory();
                                     factory(factory const &) = delete;
     factory &                       operator = (factory const &) = delete;
 
     definition const &              plugin_definition() const;
-    std::shared_ptr<plugin>         instance() const;
+    std::shared_ptr<plugin>         get_plugin() const;
     void                            register_plugin(char const * name, std::shared_ptr<plugin> p);
 
-protected:
-    void                            save_factory_in_plugin(plugin * p);
+//protected:
+//    void                            save_factory_in_plugin(plugin * p);
 
 private:
+    friend plugin;
+
     definition const &              f_definition;
     std::shared_ptr<plugin>         f_plugin = std::shared_ptr<plugin>();
 };

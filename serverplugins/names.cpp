@@ -27,6 +27,7 @@
 // snapdev
 //
 #include    <snapdev/glob_to_list.h>
+#include    <snapdev/pathinfo.h>
 #include    <snapdev/tokenize_string.h>
 
 
@@ -413,10 +414,13 @@ names::filename_t names::to_filename(name_t const & name)
  * Adding the same name multiple times is allowed and does not create any
  * side effects. Only the first instance of the name is kept.
  *
- * \exception serverplugins_invalid_error
+ * \exception invalid_error
  * The names are run through the validate_name() function to make sure they
- * are compatible with scripts. Also, we prevent the adding of the reserved
- * name called "server".
+ * are compatible with scripts.
+ *
+ * \exception not_found
+ * If \p name is not directly a filename, then the function verifies that
+ * it can find the file. If that fails, then this exception is raised.
  *
  * \param[in] name  The name or filename of a plugin to be loaded.
  */
@@ -457,6 +461,16 @@ void names::push(name_t const & name)
                     + "\").");
         }
         fn = name;
+
+        if(!snapdev::pathinfo::file_exists(fn, R_OK | X_OK))
+        {
+            throw not_found(
+                      "plugin named \""
+                    + n
+                    + "\" not available at \""
+                    + fn
+                    + "\".");
+        }
     }
     else
     {
@@ -478,10 +492,10 @@ void names::push(name_t const & name)
         n = name;
     }
 
-    if(n == "server")
-    {
-        throw invalid_error("the name \"server\" is reserved for the main running process.");
-    }
+    //if(n == "server")
+    //{
+    //    throw invalid_error("the name \"server\" is reserved for the main running process.");
+    //}
 
     f_names[n] = fn;
 }

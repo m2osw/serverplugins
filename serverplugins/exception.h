@@ -44,7 +44,7 @@ DECLARE_EXCEPTION(serverplugins_exception, invalid_error);
 DECLARE_EXCEPTION(serverplugins_exception, invalid_order);
 DECLARE_EXCEPTION(serverplugins_exception, name_mismatch);
 DECLARE_EXCEPTION(serverplugins_exception, not_found);
-DECLARE_EXCEPTION(serverplugins_exception, server_already_exists);
+DECLARE_EXCEPTION(serverplugins_exception, plugins_already_loaded);
 
 
 

@@ -326,8 +326,6 @@ typename std::enable_if<!std::is_same<T, F>::value && (sizeof...(ARGS) > 0), str
 template<class ...ARGS>
 constexpr definition define_plugin(ARGS ...args)
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
     definition def =
     {
         .f_version =                find_plugin_information<plugin_version>(args...),        // no default, must be defined
@@ -343,7 +341,8 @@ constexpr definition define_plugin(ARGS ...args)
         .f_suggestions =            find_plugin_set<suggestion>(args...),
         .f_settings_path =          find_plugin_information<settings_path>(args..., settings_path()),
     };
-#pragma GCC diagnostic pop
+
+    // TODO: add verifications to make sure parameters are consistent
 
     return def;
 }
@@ -354,7 +353,7 @@ constexpr definition define_plugin(ARGS ...args)
     constexpr ::serverplugins::version_t::number_t g_##name##_version_minor = minor;
 
 
-// helper macros to define a definition structure
+// helper macros to create a plugin definition structure
 //
 #define SERVERPLUGINS_START(name) \
     ::serverplugins::definition const g_##name##_definition = ::serverplugins::define_plugin( \
@@ -369,13 +368,37 @@ constexpr definition define_plugin(ARGS ...args)
     class plugin_##name##_factory : public ::serverplugins::factory { \
     public: plugin_##name##_factory() \
         : factory(g_##name##_definition, std::make_shared<name>(*this)) \
-        { register_plugin(#name, instance()); } \
+        { register_plugin(#name, get_plugin()); } \
     plugin_##name##_factory(plugin_##name##_factory const &) = delete; \
     plugin_##name##_factory & operator = (plugin_##name##_factory const &) = delete; \
     } g_##name##_factory; \
     name::name(::serverplugins::factory const & f) : plugin(f) {} \
-    name::~name() {} \
-    name::pointer_t name::instance() { return std::static_pointer_cast<name>(g_##name##_factory.instance()); }
+    name::~name() {}
+
+    //name::pointer_t name::instance() { return std::static_pointer_cast<name>(g_##name##_factory.instance()); }
+
+
+// the following are very similar, but used to initialize the definitions
+// of a server, which is also a plugin, but we have a chicken and the egg
+// issue where we cannot have the factory and create the server "at the
+// same time" because we do not know what the server constructor will
+// requireo
+//
+// this also means you need to _manually_ pass the factory to the server()
+// constructor and later save the server shared pointer in the factory
+// so that way the plugin is properly initialized
+//
+#define SERVERPLUGINS_START_SERVER(name) SERVERPLUGINS_START(name)
+
+
+#define SERVERPLUGINS_END_SERVER(name) \
+    ); \
+    class server_##name##_factory : public ::serverplugins::factory { \
+    public: server_##name##_factory() \
+        : factory(g_##name##_definition, nullptr) {} \
+    server_##name##_factory(server_##name##_factory const &) = delete; \
+    server_##name##_factory & operator = (server_##name##_factory const &) = delete; \
+    } g_##name##_factory;
 
 
 

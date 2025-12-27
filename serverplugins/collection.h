@@ -52,8 +52,23 @@ public:
     bool                                load_plugins(server::pointer_t s);
     bool                                is_loaded(std::string const & name) const;
 
+    /** \brief Specifically retrieve the server.
+     *
+     * This function specifically returns the server pointer. The pointer
+     * must be of type T or a null pointer is returned. Note that the
+     * function should never return a null pointer since you should always
+     * know the exact type of the server.
+     *
+     * The function is much faster than get_plugin() since the collection
+     * keeps a direct pointer to the server plugin (i.e. there is no need
+     * to search for the pointer).
+     *
+     * \tparam T  The type of the server (i.e. sitter, communicatord, ...)
+     *
+     * \return The pointer to the server.
+     */
     template<typename T>
-    typename T::pointer_t               get_server()
+    typename T::pointer_t get_server()
     {
         return std::dynamic_pointer_cast<T>(f_server);
     }
@@ -73,7 +88,7 @@ public:
      * \return The pointer to the plugin if found, nullptr otherwise.
      */
     template<typename T>
-    typename T::pointer_t               get_plugin_by_name(std::string const & name)
+    typename T::pointer_t get_plugin(std::string const & name)
     {
         auto it(f_plugins_by_name.find(name));
         if(it != f_plugins_by_name.end())

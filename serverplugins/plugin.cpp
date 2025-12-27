@@ -90,6 +90,45 @@ plugin::~plugin()           // LCOV_EXCL_LINE
 }                           // LCOV_EXCL_LINE
 
 
+/** \brief Initialize the f_plugin pointer in the plugin factory.
+ *
+ * On creation of the server, the f_plugin pointer in the corresponding
+ * plugin factory is set to nullptr. This function is used to fix that
+ * issue. Until this is called, we obviously cannot safe use the factory
+ * which assumes that the pointer isn't null.
+ *
+ * In most cases, you create your daemon, then call this function:
+ *
+ * \code
+ *     communicator_daemon::communicatord::pointer_t server(std::make_shared<communicator_daemon::communicatord>(argc, argv));
+ *     server->complete_plugin_initialization();
+ *     return server->run();
+ * \endcode
+ */
+void plugin::complete_plugin_initialization()
+{
+    if(f_factory->f_plugin == nullptr)
+    {
+        const_cast<factory *>(f_factory)->f_plugin = shared_from_this();
+    }
+}
+
+
+/** \brief The first collection this plugin was loaded in.
+ *
+ * \warning
+ * This function returns the first collection the plugin was loaded in. If
+ * the same plugin gets loaded in different collections, then the plugin
+ * is not properly attached to each collection.
+ *
+ * \return The collection this plugin is part of.
+ */
+collection * plugin::plugins() const
+{
+    return f_collection;
+}
+
+
 /** \brief Return the version of the plugin.
  *
  * This function returns the version of the plugin. This can be used to
@@ -263,21 +302,6 @@ string_set_t plugin::suggestions() const
 std::string plugin::settings_path() const
 {
     return f_factory->plugin_definition().f_settings_path;
-}
-
-
-/** \brief The first collection this plugin was loaded in.
- *
- * \warning
- * This function returns the first collection the plugin was loaded in. If
- * the same plugin gets loaded in different collections, then the plugin
- * is not properly attached to each collection.
- *
- * \return The collection this plugin is part of.
- */
-collection * plugin::plugins() const
-{
-    return f_collection;
 }
 
 

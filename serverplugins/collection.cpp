@@ -63,8 +63,9 @@ namespace serverplugins
  *
  * \code
  *     // first make sure your main daemon object derives from
- *     // serverplugins::server; this way you can add it as the "server"
- *     // plugin and then the  other plugins depend on it
+ *     // serverplugins::server; this way it gets added as the
+ *     // server plugin when you call load_plugins() and the
+ *     // other plugins automatically depend on it
  *     //
  *     class daemon
  *         : public serverplugins::server
@@ -73,24 +74,26 @@ namespace serverplugins
  *         ...
  *     };
  *
- *     // create your daemon (in most cases we do that in our main()
- *     // function, notice, though that we want a shared pointer
+ *     // create your daemon--in most cases, we do that in our main()
+ *     // function, notice that we want a shared pointer
  *     //
  *     daemon::pointer_t d(std::make_shared<daemon>());
  *
  *     ...
  *
- *     serverplugins::id_t id(get_id("my-server"));
+ *     // the name must be exactly the same as the class above (class daemon)
+ *     //
+ *     serverplugins::id_t id(get_id("daemon"));
  *
  *     paths p;
  *     p.add("/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
  *
  *     names n(p, true);
  *     n.add("network, cloud-system");
- *     // or:  n.find_plugins();   to read all the plugins
+ *     // or:  n.find_plugins("<prefix>_");   to read all the plugins
  *
- *     collection c(id, n);
- *     c.set_data(&my_app);
+ *     collection c(n);
+ *     c.set_data(&my_app); // optional
  *     c.load_plugins(d);   // your daemon is passed down to all plugins now
  * \endcode
  *
@@ -173,7 +176,7 @@ void collection::set_data(void * data)
  * At the moment, the one drawback is that all the signals of one plugin
  * get added at the same time (via the bootstrap() function) which means
  * that signal A:S1 will not happen before B:S1 if A is initialized first.
- * In our experence, it has been pretty reliable in most cases. We had a
+ * In our experience, it has been pretty reliable in most cases. We had a
  * very few cases were something would not happen quite in order and we
  * had to add another message to fix the issue (i.e. if A:S1 happens
  * before B:S1 but you need A to react after B:S1 made some changes to
@@ -188,31 +191,38 @@ bool collection::load_plugins(server::pointer_t s)
 {
     cppthread::guard lock(f_mutex);
 
-    id_t const id(s->get_server_id());
-    if(detail::g_server_plugin_factory[id] != nullptr)
+    if(!f_plugins_by_name.empty())
     {
-        throw server_already_exists("plugins for \"" + get_name(id) + "\" were already loaded;"
+        throw plugins_already_loaded("plugins for \"" + s->name() + "\" were already loaded;"
                 " you cannot call load_plugins() more than once for the same server.");
     }
+
+    //id_t const id(s->get_server_id());
+    //if(detail::g_server_plugin_factory[id] != nullptr)
+    //{
+    //    throw server_already_exists("plugins for \"" + get_name(id) + "\" were already loaded;"
+    //            " you cannot call load_plugins() more than once for the same server.");
+    //}
 
     // this is a bit ugly but it allows us to define a root like plugin
     // which is the main process code; we call it a server because in
     // most cases it is a server/daemon type of process which makes
     // use of plugins (at least in our environment)
     //
-    // so in the following we (1) create a server factory manually
-    // and (2) register the server as f_server and f_plugins_by_name["server"]
+    // so in the following we
+    //   (1) create a server factory manually; and
+    //   (2) register the server as f_server; and
+    //   (3) and also register it as a plugin: f_plugins_by_name[s->name()]
     //
     f_server = s;
-    detail::g_server_plugin_factory[id] = new detail::server_plugin_factory(s);
-    f_plugins_by_name["server"] = s;
+    //detail::g_server_plugin_factory[id] = new detail::server_plugin_factory(s);
+    f_plugins_by_name[s->name()] = s;
 
-#ifdef _DEBUG
-    if(s->name() != "server")
-    {
-        throw logic_error("the name in the server_factory definition must be \"server\".");
-    }
-#endif
+    cppthread::log << cppthread::log_level_t::debug
+        << "registered your server as the root plugin named \""
+        << s->name()
+        << "\"."
+        << cppthread::end;
 
     detail::repository & repository(detail::repository::instance());
     bool changed(true);
@@ -224,18 +234,19 @@ bool collection::load_plugins(server::pointer_t s)
         names::names_t n(f_names.map());
         for(auto const & name_filename : n)
         {
-            // the main process is considered to be the "server" plugin and it
-            // will eventually be added to the list under that name, so we can't
-            // allow this name here
+            // make sure the plugins do not try to use the name of the server
+            // as their own name
             //
-            // Note: this should not happen since we don't allow the addition of
-            // the "server" name to the list of names (see names::push()
-            // for details)
+            // TODO: this was forced to "server" before, but that causes issues
+            //       in the macros (illogism); we may have to fix some other
+            //       sections that still use the hard coded name "server"
             //
-            if(name_filename.first == "server")
+            if(name_filename.first == s->name())
             {
                 cppthread::log << cppthread::log_level_t::error         // LCOV_EXCL_LINE
-                    << "a plugin cannot be called \"server\"."          // LCOV_EXCL_LINE
+                    << "a plugin cannot be called like the server \""   // LCOV_EXCL_LINE
+                    << s->name()                                        // LCOV_EXCL_LINE
+                    << "\"."                                            // LCOV_EXCL_LINE
                     << cppthread::end;                                  // LCOV_EXCL_LINE
                 good = false;                                           // LCOV_EXCL_LINE
                 continue;                                               // LCOV_EXCL_LINE
@@ -294,7 +305,7 @@ bool collection::load_plugins(server::pointer_t s)
             for(auto & d : dependencies)
             {
                 if(n.find(d) == n.end()
-                && d != "server")       // server dependency is implied
+                && d != s->name())       // server dependency is implied
                 {
                     f_names.push(d);
                     changed = true;
@@ -353,6 +364,15 @@ bool collection::load_plugins(server::pointer_t s)
  * whether a plugin is available before trying to access its functionality.
  * So in other words, you can make certain plugins optional and still have
  * a fully functional system, just with less capabilities.
+ *
+ * \note
+ * You may instead want to directly do a `get_plugin<type>()` and
+ * test whether the pointer is nullptr or not. It would be faster.
+ * Further, you can do that `get_plugin()` once at initialization
+ * time and save the pointer in a variable member. Then in the
+ * rest of your plugin, just use `if(other_plugin != nullptr)`
+ * before making use of the plugin. You can do that initialization
+ * in the plugin::bootstrap() function.
  *
  * \param[in] name  The name of the plugin to check for.
  *

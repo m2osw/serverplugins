@@ -32,14 +32,25 @@
 namespace optional_namespace
 {
 
+
+
+SERVERPLUGINS_START_SERVER(daemon)
+    , ::serverplugins::description("The daemon.")
+    , ::serverplugins::help_uri("https://snapwebsites.org/help")
+    , ::serverplugins::categorization_tag("server")
+SERVERPLUGINS_END_SERVER(daemon)
+
+
 daemon::daemon(int argc, char * argv[])
-    : server(serverplugins::get_id("daemon"))
+    : server(g_daemon_factory)
 {
     // this is where we would parse argc/argv
     CATCH_REQUIRE(argc == 1);
     CATCH_REQUIRE(strcmp(argv[0], "/usr/sbin/daemon") == 0);
     CATCH_REQUIRE(argv[1] == nullptr);
 }
+
+
 
 } // namespace optional_namespace
 // vim: ts=4 sw=4 et

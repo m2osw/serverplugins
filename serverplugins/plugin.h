@@ -43,7 +43,10 @@ namespace detail
 class repository;
 } // namespace detail
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 class plugin
+    : public std::enable_shared_from_this<plugin>
 {
 public:
     typedef std::shared_ptr<plugin>     pointer_t;
@@ -57,6 +60,11 @@ public:
     virtual                             ~plugin();
     plugin &                            operator = (plugin const &) = delete;
 
+    void                                complete_plugin_initialization();
+    collection *                        plugins() const;
+
+    // data read from the definition structure
+    //
     version_t                           version() const;
     time_t                              last_modification() const;
     names::name_t                       name() const;
@@ -69,7 +77,6 @@ public:
     string_set_t                        conflicts() const;
     string_set_t                        suggestions() const;
     std::string                         settings_path() const;
-    collection *                        plugins() const;
 
     virtual void                        bootstrap();
     virtual time_t                      do_update(time_t last_updated, unsigned int phase = 0);
@@ -79,19 +86,21 @@ private:
     friend class collection;
     friend class factory;
 
-    factory const *              f_factory = nullptr;
+    factory const * const        f_factory = nullptr;
     names::filename_t            f_filename = std::string();
     collection *                 f_collection = nullptr;
 };
+#pragma GCC diagnostic pop
 
 
 #define SERVERPLUGINS_DEFAULTS(name) \
     typedef std::shared_ptr<name> pointer_t; \
     name(::serverplugins::factory const & factory); \
     name(name const &) = delete; \
-    virtual ~name(); \
-    name & operator = (name const &) = delete; \
-    static pointer_t instance()
+    virtual ~name() override; \
+    name & operator = (name const &) = delete
+
+    //static pointer_t instance()
 
 
 
@@ -147,12 +156,12 @@ private:
  * \param[in] args  The list of arguments to that signal.
  */
 #define SERVERPLUGINS_LISTEN(name, emitter_class, signal, args...) \
-    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin_by_name<emitter_class>(#emitter_class)); \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
         if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
                         boost::bind(&name::on_##signal, this, ##args)); } while(false)
 
 #define SERVERPLUGINS_LISTEN0(name, emitter_class, signal) \
-    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin_by_name<emitter_class>(#emitter_class)); \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
         if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
                         boost::bind(&name::on_##signal, this)); } while (false)
 

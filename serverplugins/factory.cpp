@@ -51,11 +51,11 @@ namespace serverplugins
  * for more details about that).
  *
  * \param[in] definition  The definition of the plugin.
- * \param[in] instance  The instance of the plugin.
+ * \param[in] p  The instance of the plugin.
  */
-factory::factory(definition const & definition, std::shared_ptr<plugin> instance)
+factory::factory(definition const & definition, std::shared_ptr<plugin> p)
     : f_definition(definition)
-    , f_plugin(instance)
+    , f_plugin(p)
 {
 }
 
@@ -64,7 +64,7 @@ factory::factory(definition const & definition, std::shared_ptr<plugin> instance
  *
  * Whenever we unload the plugin (using dlclose()), the factor gets destroyed
  * and the plugin is expected to be ready for destruction which means no other
- * object still hold a reference to it.
+ * objects still hold a reference to it.
  */
 factory::~factory()
 {
@@ -97,23 +97,23 @@ definition const & factory::plugin_definition() const
 }
 
 
-/** \brief Retrieve a copy instance of the plugin.
+/** \brief Retrieve a pointer to the plugin.
  *
- * This function returns a copy of the plugin instance that the factory
+ * This function returns a pointer to the plugin instance that the factory
  * allocated on construction. This is a shared pointer. Since the factory
  * can be destroyed by calling the dlclose() function, we can then detect
  * that the dlclose() was called too soon (i.e. that some other objects
- * still hold a reference to the plugin.)
+ * still hold a reference to the plugin).
  *
  * \return A shared pointer to the plugin managed by this plugin factory.
  */
-std::shared_ptr<plugin> factory::instance() const
+std::shared_ptr<plugin> factory::get_plugin() const
 {
     return f_plugin;
 }
 
 
-/** \brief Regiter the specified plugin.
+/** \brief Register the specified plugin.
  *
  * This function gets called by the plugin factory of each plugin that gets
  * loaded by the dlopen() function.
@@ -137,7 +137,7 @@ void factory::register_plugin(char const * name, plugin::pointer_t p)
     {
         // as long as you use the supplied macro, this should never ever
         // occur since the allocation of the plugin would fail if the
-        // name do not match; that being said, you can attempt to create
+        // names do not match; that being said, you can attempt to create
         // two plugins in a single file and that is a case we do not support
         // and would result in such an error
         //
@@ -153,16 +153,16 @@ void factory::register_plugin(char const * name, plugin::pointer_t p)
 }
 
 
-void factory::save_factory_in_plugin(plugin * p)
-{
-#ifdef _DEBUG
-    if(f_definition.f_name != "server")
-    {
-        throw logic_error("the save_factory_in_plugin() function is only to be used by the server plugin--other plugins are loaded and this save happens automatically");
-    }
-#endif
-    p->f_factory = this;
-}
+//void factory::save_factory_in_plugin(plugin * p)
+//{
+//#ifdef _DEBUG
+//    if(f_definition.f_name != "server") <- now a server can be any name!?
+//    {
+//        throw logic_error("the save_factory_in_plugin() function is only to be used by the server plugin--other plugins are loaded and this save happens automatically");
+//    }
+//#endif
+//    p->f_factory = this;
+//}
 
 
 

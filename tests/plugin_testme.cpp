@@ -53,7 +53,7 @@ SERVERPLUGINS_VERSION(testme, 5, 3)
 
 SERVERPLUGINS_START(testme)
     , ::serverplugins::description("a test plugin to make sure it all works.")
-    , ::serverplugins::help_uri("https://snapwebsites.org/")
+    , ::serverplugins::help_uri("https://snapwebsites.org/help")
     , ::serverplugins::icon("cute.ico")
     , ::serverplugins::categorization_tag("test")
     , ::serverplugins::categorization_tag("powerful")

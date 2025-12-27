@@ -34,7 +34,10 @@ used in a plugin just like any other function in your software.
 The server is the one that loads the plugins on startup and in most cases
 also the object that emits signals.
 
-This class must derive the serverplugins `server` class:
+This class must derive the serverplugins `server` class and we generally
+define the version in the header file:
+
+    SERVERPLUGINS_VERSION(my_server, 1, 0)
 
     class my_server
         : public serverplugins::server
@@ -46,10 +49,17 @@ This class must derive the serverplugins `server` class:
           `serverplugins::plugin`, which is how we make the server also
           a plugin like any other plugins in your collection.
 
-The constructor has to be called with the identifier:
+The constructor has to be called with its factory so we first define the
+factory and then implement the constructor:
+
+    SERVERPLUGINS_START_SERVER(my_server)
+        , ::serverplugins::description("Brief descrition of my server.")
+        , ::serverplugins::help_uri("https://snapwebsites.org/help")
+        , ::serverplugins::categorization_tag("server")
+    SERVERPLUGINS_END_SERVER(my_server)
 
     my_server::my_server()
-        : server(serverplugins::get_id("my_server"))
+        : server(g_my_server_factory)
     {
     ...
     }
@@ -58,7 +68,7 @@ The constructor has to be called with the identifier:
              macros to make it all work as expected. This is true of all
              plugins.
 
-To define the signals, use the `PLUGING_SIGAL()` or `PLUGIN_SIGNAL_WITH_MODE()`
+To define the signals, use the `PLUGING_SIGNAL()` or `PLUGIN_SIGNAL_WITH_MODE()`
 macros. Those create the necessary code to emit the signal.
 
     class my_server
@@ -79,6 +89,59 @@ main signal function. The start function is conditional, if any one of
 them returns false, then the rest does not get called. If all of them
 return true, then the main signal and all the end signal functions
 do get called.
+
+Now we are pretty much ready to initialize the server and load the plugins.
+Note the call to the `complete_plugin_initialization()` function. This is
+very important because the server expects different arguments than a regular
+plugin so we are not able to automatically initialize the plugin pointer in
+the server factory.
+
+    int main(int argc, char * argv[])
+    {
+        my_server::pointer_t s(std::make_shared<my_server>(argc, argv));
+        s->complete_plugin_initialization();
+
+        // define a list of colon separated paths
+        // (or call the add() function once per path)
+        //
+        serverplugins::paths p;
+        p.add("/usr/local/lib/my_project/plugins:/usr/lib/my_project/plugins");
+
+        // setup the plugin filenames
+        //
+        serverplugins::names n(p);
+        n.find_plugins();
+
+        // create a collection from plugins we found automatically
+        // (opposed to setting the name from a plugins=... variable found in your daemon settings)
+        //
+        serverplugins::collection c(n);
+
+        // now load the plugins
+        //
+        if(!c.load_plugins(s))
+        {
+            // ...
+            std::cerr << "error: could not load all the plugins.\n";
+            return 1;
+        }
+
+        return s->run();
+    }
+
+**Note 1:** At the moment I most often put the collection insider the server,
+            this means I end up with a shared pointer loop since the
+            collection holds two shared pointers to the server...
+
+**Note 2:** You are free to create any number of collections. One collection
+            can only have one given plugin loaded. However, separate
+            collections can share the same plugin (however, the binding
+            is currently specific to a server, so in all likelihood, it
+            won't work unless you do not use the macros to setup the
+            bindings).
+
+**Note 3:** The above does not show any exception handling.
+
 
 ## Send a Signal
 

@@ -28,18 +28,23 @@ namespace optional_namespace
 {
 
 
+
+SERVERPLUGINS_VERSION(daemon, 1, 0)
+
+
 class daemon
     : public serverplugins::server
 {
 public:
+    // we cannot use the SERVERPLUGINS_PLUGIN_DEFAULTS(daemon); so define
+    // some useful parameters _by hand_
+    //
+    typedef std::shared_ptr<daemon>     pointer_t;
+
     // in most cases our daemons are given the argc/argv parameters from
     // main() and the daemon parses those with advgetopt
     //
     daemon(int argc, char * argv[]);
-
-    // we already have the plugin defaults in the serverplugins::server
-    //SERVERPLUGINS_PLUGIN_DEFAULTS(daemon);
-    typedef std::shared_ptr<daemon>     pointer_t;
 
     int f_value = 0xA987;
 };

@@ -700,16 +700,17 @@ CATCH_TEST_CASE("names", "[plugins][names]")
                           "serverplugins_exception: invalid plugin name in \"invalid-name\"."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
-                  n.push("non_existant")
+                  n.push("non_existent")
                 , serverplugins::not_found
                 , Catch::Matchers::ExceptionMessage(
-                          "serverplugins_exception: plugin named \"non_existant\" not found in any of the specified paths."));
+                          "serverplugins_exception: plugin named \"non_existent\" not found in any of the specified paths."));
 
-        CATCH_REQUIRE_THROWS_MATCHES(
-                  n.push("./libserver.so")
-                , serverplugins::invalid_error
-                , Catch::Matchers::ExceptionMessage(
-                          "serverplugins_exception: the name \"server\" is reserved for the main running process."));
+        // at the moment, we do not use that special name anymore
+        //CATCH_REQUIRE_THROWS_MATCHES(
+        //          n.push("./libserver.so")
+        //        , serverplugins::invalid_error
+        //        , Catch::Matchers::ExceptionMessage(
+        //                  "serverplugins_exception: the name \"server\" is reserved for the main running process."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   n.push("./libjuju1.23.so")
@@ -725,19 +726,39 @@ CATCH_TEST_CASE("collection", "[plugins][collection]")
 {
     CATCH_START_SECTION("collection: load the plugin")
     {
+        // initialize the daemon
+        //
         char const * argv[] = { "/usr/sbin/daemon", nullptr };
         optional_namespace::daemon::pointer_t d(std::make_shared<optional_namespace::daemon>(1, const_cast<char **>(argv)));
+        d->complete_plugin_initialization();
 
+        // define a list of colon separated paths
+        //
         serverplugins::paths p;
         p.add(CMAKE_BINARY_DIR "/tests:/usr/local/lib/snaplogger/plugins:/usr/lib/snaplogger/plugins");
+
+        // setup the plugin filenames
+        //
         serverplugins::names n(p);
         n.find_plugins();
+
+        // create a collection from plugins we found automatically
+        // (opposed to setting the name from a plugins=... variable found in your daemon settings)
+        //
         serverplugins::collection c(n);
+
+        // now load the plugins
+        //
         bool const loaded(c.load_plugins(d));
         CATCH_REQUIRE(loaded);
-        optional_namespace::testme::pointer_t r(c.get_plugin_by_name<optional_namespace::testme>("testme"));
+
+        // make sure the testme plugin was indeed loaded
+        //
+        optional_namespace::testme::pointer_t r(c.get_plugin<optional_namespace::testme>("testme"));
         CATCH_REQUIRE(r != nullptr);
 
+        // verify the plugin definitions
+        //
         serverplugins::version_t const v(r->version());
         CATCH_CHECK(v.f_major == 5);
         CATCH_CHECK(v.f_minor == 3);
@@ -748,7 +769,7 @@ CATCH_TEST_CASE("collection", "[plugins][collection]")
         CATCH_REQUIRE(r->name() == "testme");
         CATCH_REQUIRE(r->filename() == CMAKE_BINARY_DIR "/tests/libtestme.so");
         CATCH_REQUIRE(r->description() == "a test plugin to make sure it all works.");
-        CATCH_REQUIRE(r->help_uri() == "https://snapwebsites.org/");
+        CATCH_REQUIRE(r->help_uri() == "https://snapwebsites.org/help");
         CATCH_REQUIRE(r->icon() == "cute.ico");
 
         serverplugins::string_set_t tags(r->categorization_tags());
@@ -759,6 +780,7 @@ CATCH_TEST_CASE("collection", "[plugins][collection]")
         CATCH_REQUIRE(tags.find("undefined") == tags.end());
 
         // at this time we have a single plugins so not dependencies
+        // (although we could depend on "daemon", but that's not necessary)
         //
         serverplugins::string_set_t dependencies(r->dependencies());
         CATCH_REQUIRE(dependencies.empty());
@@ -771,8 +793,11 @@ CATCH_TEST_CASE("collection", "[plugins][collection]")
         CATCH_REQUIRE(conflicts.find("undefined") == conflicts.end());
 
         serverplugins::string_set_t suggestions(r->suggestions());
+        CATCH_REQUIRE(suggestions.size() == 1);
+        CATCH_REQUIRE(suggestions.find("beautiful") != suggestions.end());
+        CATCH_REQUIRE(suggestions.find("ugly") == suggestions.end());
 
-        // WARNING: for it_worked() to compile, it needs to be a virtual
+        // WARNING: for it_worked() to compile, it needs to be virtual
         //
         std::string const msg(r->it_worked());
         CATCH_CHECK(msg == "testme:plugin: it worked, it was called!");

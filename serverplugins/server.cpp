@@ -34,41 +34,39 @@ namespace serverplugins
 {
 
 
-namespace detail
+//namespace detail
+//{
+//
+//
+//
+//definition const g_server_plugin_definition = define_plugin(
+//      plugin_version(version_t(1, 0, 0))
+//    , library_version(version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH))
+//    , last_modification(UTC_BUILD_TIME_STAMP)
+//    , plugin_name("server")
+//);
+//
+//
+//server_plugin_factory::server_plugin_factory(server::pointer_t s)
+//    : factory(g_server_plugin_definition, std::dynamic_pointer_cast<plugin>(s))
+//{
+//    save_factory_in_plugin(s.get());
+//    register_plugin("server", instance());
+//}
+//
+//
+//server_plugin_factory * g_server_plugin_factory[MAX_ID] = {};
+//
+//
+//
+//
+//} // namespace detail
+
+
+
+server::server(factory const & f)
+    : plugin(f)
 {
-
-
-
-definition const g_server_plugin_definition = define_plugin(
-      plugin_version(version_t(1, 0, 0))
-    , library_version(version_t(SERVERPLUGINS_VERSION_MAJOR, SERVERPLUGINS_VERSION_MINOR, SERVERPLUGINS_VERSION_PATCH))
-    , last_modification(UTC_BUILD_TIME_STAMP)
-    , plugin_name("server")
-);
-
-server_plugin_factory::server_plugin_factory(server::pointer_t s)
-    : factory(g_server_plugin_definition, std::dynamic_pointer_cast<plugin>(s))
-{
-    save_factory_in_plugin(s.get());
-    register_plugin("server", instance());
-}
-
-
-server_plugin_factory * g_server_plugin_factory[MAX_ID] = {};
-
-
-
-
-} // namespace detail
-
-
-server::server(id_t id)
-    : f_id(id)
-{
-    if(f_id == NULL_ID)
-    {
-        throw out_of_range("NULL_ID is not a valid identifier for server::server().");
-    }
 }
 
 
@@ -77,24 +75,24 @@ server::~server()
 }
 
 
-server::pointer_t server::instance(id_t id)
-{
-    if(id == NULL_ID)
-    {
-        throw out_of_range("NULL_ID is not a valid identifier for server::instance().");
-    }
-    if(detail::g_server_plugin_factory[id] == nullptr)
-    {
-        throw not_found("server with identifier " + std::to_string(static_cast<unsigned int>(id)) + " is not defined. Did you call collection::load_plugins() yet?");
-    }
-    return std::static_pointer_cast<server>(detail::g_server_plugin_factory[id]->instance());
-}
+//server::pointer_t server::instance(id_t id)
+//{
+//    if(id == NULL_ID)
+//    {
+//        throw out_of_range("NULL_ID is not a valid identifier for server::instance().");
+//    }
+//    if(detail::g_server_plugin_factory[id] == nullptr)
+//    {
+//        throw not_found("server with identifier " + std::to_string(static_cast<unsigned int>(id)) + " is not defined. Did you call collection::load_plugins() yet?");
+//    }
+//    return std::static_pointer_cast<server>(detail::g_server_plugin_factory[id]->instance());
+//}
 
 
-id_t server::get_server_id() const
-{
-    return f_id;
-}
+//id_t server::get_server_id() const
+//{
+//    return f_id;
+//}
 
 
 
