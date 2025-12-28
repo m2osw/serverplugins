@@ -462,7 +462,9 @@ void names::push(name_t const & name)
         }
         fn = name;
 
-        if(!snapdev::pathinfo::file_exists(fn, R_OK | X_OK))
+        // strangely enough, the .so files do not get the execute bit set
+        //
+        if(!snapdev::pathinfo::file_exists(fn, R_OK))
         {
             throw not_found(
                       "plugin named \""

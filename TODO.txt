@@ -1,4 +1,0 @@
-
-
-* Break up the test in one test per class.
-
