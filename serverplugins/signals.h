@@ -24,12 +24,12 @@
  *
  * When a signal is called, the process is two or three steps:
  *
- * 1. call the plugin signal implementation (the \<name>_impl() function)
+ * 1. call the plugin signal implementation (the \<name>_start() function)
  *    if that function returns false, stop the process immediately
  *
  * 2. process the signal so any other plugin that registered to receive
  *    this signal is called; the process cannot stop early, all plugins
- *    functions will be called in an undertermined order
+ *    functions will be called in an undetermined order
  *
  * 3. if it exists, call the signal done function (the \<name>_done()
  *    function of the plugin); this function can do some cleanup or emit
@@ -39,28 +39,31 @@
  *
  * \code
  * PLUGIN_SIGNAL(bootstrap, (), ())
- * PLUGIN_SIGNAL(execute, (const QString& url), (url));
+ * PLUGIN_SIGNAL(execute, (std::sring const & url), (url));
  * \endcode
  *
  */
 
-#include    <boost/signals2.hpp>
+
+// snapdev
+//
+#include    <snapdev/callback_manager.h>
 
 
 
 #define     PLUGIN_SIGNAL_PROCESS_MODE_NEITHER(name, parameters, variables)   \
     public: \
         void name parameters { \
-            f_signal_##name variables; \
+            f_signal_##name.call variables; \
         }
 
 #define     PLUGIN_SIGNAL_PROCESS_MODE_START(name, parameters, variables)   \
-        bool name##_impl parameters; \
+        bool name##_start parameters; \
     public: \
         void name parameters { \
-            if(name##_impl variables) \
+            if(name##_start variables) \
             { \
-                f_signal_##name variables; \
+                f_signal_##name.call variables; \
             } \
         }
 
@@ -68,18 +71,18 @@
         void name##_done parameters; \
     public: \
         void name parameters { \
-            f_signal_##name variables; \
+            f_signal_##name.call variables; \
             name##_done variables; \
         }
 
 #define     PLUGIN_SIGNAL_PROCESS_MODE_START_AND_DONE(name, parameters, variables)   \
-        bool name##_impl parameters; \
+        bool name##_start parameters; \
         void name##_done parameters; \
     public: \
         void name parameters { \
-            if(name##_impl variables) \
+            if(name##_start variables) \
             { \
-                f_signal_##name variables; \
+                f_signal_##name.call variables; \
                 name##_done variables; \
             } \
         }
@@ -99,56 +102,61 @@
  *
  * This macro also expects a couple of functions named:
  *
- * \li \<name>_impl(\<parameters>), and
+ * \li \<name>_start(\<parameters>), and
  * \li \<name>_done(\<parameters>)
  *
  * These functions are called as shown below:
  *
- * \li calls \<name>_impl(\<parameters>)
+ * \li calls \<name>_start(\<parameters>)
  * \li calls all the signal functions of the plugins that registered
  * \li calls \<name>_done(\<parameters>)
  *
- * Note that the \<name>_impl() function returns a Boolean value. If it
+ * Note that the \<name>_start() function returns a Boolean value. If it
  * returns false, then the process stops immediately and no other
- * functions get called. If the mode says to not include a \<name>_impl()
+ * functions get called. If the mode says to not include a \<name>_start()
  * function, then it is assumed that it always returns true.
  *
  * Because it is time consuming and adds more functions calls for nothing
  * the macro allows you to define whether the two extra functions are
- * defined using the mode parameter set to one of the following values:
+ * necessary using the mode parameter set to one of the following values:
  *
- * \li NEITHER -- none of the \<name>_impl and \<name>_done get called
- * \li START -- only the \<name>_impl is called
+ * \warning
+ * This macro expects the visibility to be public on entry and it changes
+ * it back to public on exit. It is always expected to be used in the
+ * public section of your class declaration.
+ *
+ * \li NEITHER -- none of the \<name>_start and \<name>_done get called
+ * \li START -- only the \<name>_start is called
  * \li DONE -- only the \<name>_done function is called
  * \li START_AND_DONE -- both the functions get called
  *
  * \param[in] name  The name of the signal.
  * \param[in] parameters  A list of parameters written between parenthesis.
- * \param[in] variables  List the variable names as they appear in the
- *                       parameters, written between parenthesis.
+ * \param[in] variables  List the variable names as they appear in
+ *                       \p parameters, written between parenthesis.
  * \param[in] mode  The mode used to call the various functions.
  */
 #define    PLUGIN_SIGNAL_WITH_MODE(name, parameters, variables, mode) \
-    typedef boost::signals2::signal<void parameters> signal_##name##_t; \
-    boost::signals2::connection signal_listen_##name(signal_##name##_t::slot_type const & slot) \
-        { \
-            return f_signal_##name.connect(slot); \
-        } \
+    typedef snapdev::callback_manager<std::function<void parameters>> signal_##name##_t; \
+    signal_##name##_t::callback_id_t signal_listen_##name( \
+            signal_##name##_t::value_type const & callback, \
+            signal_##name##_t::priority_t priority = signal_##name##_t::DEFAULT_PRIORITY) \
+        { return f_signal_##name.add_callback(callback, priority); } \
     private: \
         signal_##name##_t f_signal_##name = signal_##name##_t(); \
         PLUGIN_SIGNAL_PROCESS_MODE_##mode(name, parameters, variables)
 
 
-/** \brief This macro defines a default mode set to 'impl'.
+/** \brief This macro defines a default mode set to `START`.
  *
  * The macro calls the PLUGIN_SIGNAL_WITH_MODE() macro with the mode
- * set to PLUGIN_SIGNAL_MODE_IMPL. Please check that macro definition
+ * set to `START`. Please check that other macro definition
  * for additional information about the macro and what it does.
  *
  * \param[in] name  The name of the signal.
  * \param[in] parameters  A list of parameters written between parenthesis.
- * \param[in] variables  List the variable names as they appear in the
- *                       parameters, written between parenthesis.
+ * \param[in] variables  List the variable names as they appear in
+ *                       \p parameters, written between parenthesis.
  */
 #define    PLUGIN_SIGNAL(name, parameters, variables) \
     PLUGIN_SIGNAL_WITH_MODE(name, parameters, variables, START)

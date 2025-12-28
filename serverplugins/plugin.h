@@ -134,10 +134,14 @@ private:
  *     it is also defined in the `PLUGIN_SIGNAL()`  or
  *     `PLUGIN_SIGNAL_WITH_MODE()` macro; that's how the signal is created
  *     in the \p emitter_class;
+ * \li the \p priority optional parameter allows you to specify a priority
+ *     which forces the order in which the callbacks get added; this is
+ *     useful to have the callback of certain plugins called earlier (large
+ *     priority) or later (smaller priority, possibly negative)
  * \li the \p args are arguments that the emitter pass to the listener; there
  *     must be at least one to use the `SERVERPLUGINS_LISTEN()` macro; if the
  *     signal does not use any parameter, use the `SERVERPLUGINS_LISTEN0()`
- *     instead; in most cases, these are `boost::placeholders::_1` and 2, 3,
+ *     instead; in most cases, these are `std::placeholders::_1` and 2, 3,
  *     etc. although it can be a hard coded value as well.
  *
  * The listener must have a function `void on_\<name of signal>(args...)`.
@@ -150,20 +154,39 @@ private:
  * `NEITHER` to avoid the start function which the default `PLUGIN_SIGNAL()`
  * automatically generates.
  *
+ * The priority is a rather weak way to allow for a different order for some
+ * plugins. Since the list of plugins can change over time, such an order is
+ * likely not going to help a huge whole lot. However, the collection sorts
+ * your plugins alphabetically using their name and also considering on their
+ * dependencies (if A depends on B, then B comes first in the list). This
+ * ensures that the order does not change over time except when new plugins
+ * are added and old ones removed.
+ *
  * \param[in] name  The name of the plugin connecting.
  * \param[in] emitter_class  The class with qualifiers if necessary of the plugin emitting this signal.
  * \param[in] signal  The name of the signal to listen to.
+ * \param[in] priority  The priority of the signal listener.
  * \param[in] args  The list of arguments to that signal.
  */
 #define SERVERPLUGINS_LISTEN(name, emitter_class, signal, args...) \
     do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
         if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
-                        boost::bind(&name::on_##signal, this, ##args)); } while(false)
+                        std::bind(&name::on_##signal, this, ##args)); } while(false)
 
 #define SERVERPLUGINS_LISTEN0(name, emitter_class, signal) \
     do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
         if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
-                        boost::bind(&name::on_##signal, this)); } while (false)
+                        std::bind(&name::on_##signal, this)); } while (false)
+
+#define SERVERPLUGINS_LISTEN_WITH_PRIORITY(name, emitter_class, signal, priority, args...) \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
+        if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
+                        std::bind(&name::on_##signal, this, ##args), priority); } while(false)
+
+#define SERVERPLUGINS_LISTEN0_WITH_PRIORITY(name, emitter_class, signal, priority) \
+    do { emitter_class::pointer_t plugin_pointer(plugins()->get_plugin<emitter_class>(#emitter_class)); \
+        if(plugin_pointer != nullptr) plugin_pointer->signal_listen_##signal( \
+                        std::bind(&name::on_##signal, this), priority); } while (false)
 
 
 

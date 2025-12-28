@@ -339,12 +339,14 @@ bool collection::load_plugins(server::pointer_t s)
         }
     }
 
-    // bootstrap() functions have to be called in order to get all the
-    // signals registered in order!
+    // bootstrap() functions have to be called to get all the signals
+    // registered in order.
     //
     // This one for() loop makes all the signals work as expected by
     // making sure they are in a very specific order as defined by
-    // your dependency list.
+    // your dependency list. Note, however, that a plugin may use
+    // the callback_manager priority to place its callback at a
+    // different location altogether.
     //
     for(auto const & p : f_ordered_plugins)
     {

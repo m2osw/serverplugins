@@ -266,7 +266,7 @@ macro.
 
     void my_plugin::bootstrap()
     {
-        SERVERPLUGINS_LISTEN(my_plugin, my_server, new_object, boost::placeholders::_1);
+        SERVERPLUGINS_LISTEN(my_plugin, my_server, new_object, std::placeholders::_1);
         ...
     }
 
@@ -288,11 +288,16 @@ function called by the emitter (a.k.a. `my_server::new_object()` or
 `another_plugin::another_function()`).
 
 The parameters following the name of the signal are the signal parameters.
-These are boost placeholder since we use an `std::bind()` in the macro.
-The `SERVERPLUGINS_LISTEN()` macro requires you to have at least one
-argument. If the signal does not take any arguments, then you need to
+These are function argument placeholders since we use an `std::bind()` in
+the macro. The `SERVERPLUGINS_LISTEN()` macro requires you to have at least
+one argument. If the signal does not take any arguments, then you need to
 use the `SERVERPLUGINS_LISTEN0()` macro instead. That macro takes
 exactly three parameters.
+
+It is possible to specify the priority for the listener callback. A higher
+priority means the function gets called first. The default priority is 0.
+To include a priority, use the `SERVERPLUGINS_LISTEN_WITH_PRIORITY()`.
+The priority appears just before the list of arguments.
 
 ### Implementing the Signal Handler
 
