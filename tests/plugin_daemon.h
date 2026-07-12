@@ -45,6 +45,7 @@ public:
     // main() and the daemon parses those with advgetopt
     //
     daemon(int argc, char * argv[]);
+    virtual ~daemon();
 
     int f_value = 0xA987;
 };

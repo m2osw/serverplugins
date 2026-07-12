@@ -69,7 +69,7 @@ namespace detail
  * which does the actual load of the plugin through the get_plugin(). If
  * the plugin is already loaded, then it get returned immediately. If not
  * there, then we use the dlopen() function to load it. At that point, the
- * plugin itself will register itself.
+ * plugin registers itself.
  *
  * This function returns a pointer to the singleton so we can access the
  * get_plugin() to retrieve a plugin and the register_plugin() from the

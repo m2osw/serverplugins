@@ -51,6 +51,11 @@ daemon::daemon(int argc, char * argv[])
 }
 
 
+daemon::~daemon()
+{
+}
+
+
 
 } // namespace optional_namespace
 // vim: ts=4 sw=4 et

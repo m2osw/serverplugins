@@ -32,7 +32,13 @@
 
 // libexcept
 //
-#include    "libexcept/exception.h"
+#include    <libexcept/exception.h>
+#include    <libexcept/scoped_signal_mask.h>
+
+
+// snapdev
+//
+#include    <snapdev/not_used.h>
 
 
 // C++
@@ -41,6 +47,26 @@
 
 
 
+namespace
+{
+
+
+
+int finish_init(Catch::Session & session)
+{
+    snapdev::NOT_USED(session);
+
+    if(libexcept::has_sanitizer())
+    {
+        std::cout << "Running with the sanitizer.\n";
+    }
+
+    return 0;
+}
+
+
+
+} // no name namespace
 
 
 int main(int argc, char * argv[])
@@ -51,6 +77,8 @@ int main(int argc, char * argv[])
             , argc
             , argv
             , []() { libexcept::set_collect_stack(libexcept::collect_stack_t::COLLECT_STACK_NO); }
+            , nullptr
+            , &finish_init
         );
 }
 

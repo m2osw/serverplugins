@@ -62,7 +62,7 @@ factory::factory(definition const & definition, std::shared_ptr<plugin> p)
 
 /** \brief Verify that the plugin is ready for deletion.
  *
- * Whenever we unload the plugin (using dlclose()), the factor gets destroyed
+ * Whenever we unload the plugin (using dlclose()), the factory gets destroyed
  * and the plugin is expected to be ready for destruction which means no other
  * objects still hold a reference to it.
  */
