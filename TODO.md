@@ -4,6 +4,13 @@
   - note that at this time we load & use plugins, then quit our apps. so
     that's why it's not considered urgent
 
+* Consider loading only from a small set of protected directories (i.e. root
+  can read/write there, but not just any random user)
+  - this is not practical for running in the development environment
+  - security wise, this is a really good idea otherwise you can very
+    easily tell a service running as root to load any code you want to
+    execute as root
+
 * Look at using templated functions to handle the signals instead of macros
 
   I think that the listen macros could be written using templated functions
