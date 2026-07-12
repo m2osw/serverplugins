@@ -1,4 +1,8 @@
 
+* Actually dlclose() plugins once down with them.
+  - the current version does not close anything so all the plugins leak
+  - note that at this time we load & use plugins, then quit our apps. so
+    that's why it's not considered urgent
 
 * Look at using templated functions to handle the signals instead of macros
 
