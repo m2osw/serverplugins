@@ -47,6 +47,7 @@ if(SnapCatch2_FOUND)
 
     target_link_libraries(${PROJECT_NAME}
         serverplugins
+        ${LIBEXCEPT_LIBRARIES}
         ${SNAPCATCH2_LIBRARIES}
     )
 
