@@ -1,3 +1,16 @@
+serverplugins (2.0.7.0~noble) noble; urgency=high
+
+  * Removed all dependencies on the boost library.
+  * Added a new LISTEN that gives us the ability to use any function as the
+    callback (including a lambda).
+  * Fixed the ..._impl naming with ..._start. It matches the macro name.
+  * Switch from boost::signal2 to our snapdev::callback_manager.
+  * Made some documentation enhancements.
+  * Removed the use of the instance() function. We have access to the
+    collection of plugins, so we don't actually need an instance().
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 09 Aug 2026 21:11:45 -0700
+
 serverplugins (2.0.6.0~noble) noble; urgency=high
 
   * Enhanced our tests.
