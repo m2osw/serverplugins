@@ -48,5 +48,5 @@ private:
 
 
 
-} // optional_namespace namespace
+} // namespace optional_namespace
 // vim: ts=4 sw=4 et
